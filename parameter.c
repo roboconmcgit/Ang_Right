@@ -34,7 +34,7 @@ float RAD_450_DEG = 7.8540;
 
 //Parameter of Course
 float FINAL_STRAIGHT_LENGTH = 1100.0;
-float DEAD_ZONE_LENGTH      =  400.0; //0910 tada
+float DEAD_ZONE_LENGTH      =  200.0; //0915 tada
 float FST_DANSA_POS         =  260;
 float SCD_DANSA_POS         =  260;
 
@@ -43,9 +43,9 @@ float STEP_TO_GARAGE_LENGTH = 1100;
 //Parameter of Area
 
 float LineTrace1Area[4]={0.0, 1000.0, 0.0, 2000.0};
-float MapTraceArea1[4]={0.0, 1000.0, 2000.0, 2635.55};
-float MapTraceArea2[4]={0.0, 2278.25, 2635.55, 3800.0};
-float MapTraceArea3[4]={1000.0, 2278.25, 2313.53, 2635.55};
+float MapTraceArea1[4]={0.0, 1000.0, 2000.0, 2382.16};
+float MapTraceArea2[4]={0.0, 1118.86, 2382.16, 3800.0};
+float MapTraceArea3[4]={1118.86, 2278.25, 2313.53, 3800.0};
 float MapTraceArea4[4]={1000.0, 1725.13, 1445.85, 2313.53};
 float MapTraceArea5[4]={1000.0, 1725.13, 0.0, 1445.85};
 float MapTraceArea6[4]={1725.13, 2142.17, 0.0, 2313.53};
@@ -65,9 +65,9 @@ float LookUpGateArea[4]={0.0, 0.0, 0.0, 0.0};
 float GarageArea[4]={0.0, 0.0, 0.0, 0.0};
 float StopArea[4]={0.0, 0.0, 0.0, 0.0};
 
-float Gate12Area[4]={0.0, 1000.0, 2000.0, 2635.55};
-float Gate23Area[4]={0.0, 2278.25, 2635.55, 3800.0};
-float Gate34Area[4]={1000.0, 2278.25, 2313.53, 2635.55};
+float Gate12Area[4]={0.0, 1000.0, 2000.0, 2382.16};
+float Gate23Area[4]={0.0, 1118.86, 2382.16, 3800.0};
+float Gate34Area[4]={1118.86, 2278.25, 2313.53, 3800.0};
 float Gate45Area[4]={1000.0, 1725.13, 1445.85, 2313.53};
 float Gate56Area[4]={1000.0, 1725.13, 0.0, 1445.85};
 float Gate67Area[4]={1725.13, 2142.17, 0.0, 2313.53};

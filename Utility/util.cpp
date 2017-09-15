@@ -2,7 +2,7 @@
 #include "util.h"
 #include <math.h>
 
-#define EMG_TH_V 350
+#define EMG_TH_V 380
 #define EMG_TH_N 250
 #define EMG_TH_C 100
 

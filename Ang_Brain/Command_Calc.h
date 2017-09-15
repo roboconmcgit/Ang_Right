@@ -178,5 +178,8 @@ private:
     float y_t_prev; //0818 tada. passed y_t
     float pg = 0.35;//暫定0.9 //0818 tada
     float df = 0.024;//暫定-0.1 //0818 tada
+	
+	int line_detect_flag = 0;
+	int map2line_flag = 0;
 
 };

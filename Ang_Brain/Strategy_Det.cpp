@@ -27,7 +27,8 @@ void StrategyDet::RunningStrategyDet(float x_value, float y_value, float yawangl
 
   if (Robo_Area_Estimator(StartArea[0],StartArea[1],StartArea[2],StartArea[3],x_value,y_value,yawangle)){
     Strategy=LineTrace1;
-    Max_Forward = 70;
+//    Max_Forward = 70;
+    Max_Forward = 10; // 0915 tada
     Max_Yawrate = 1.5;
     Min_Yawrate = -1.5;
   }
@@ -126,8 +127,8 @@ void StrategyDet::RunningStrategyDet(float x_value, float y_value, float yawangl
   else if(Robo_Area_Estimator(MapTraceArea8[0],MapTraceArea8[1],MapTraceArea8[2],MapTraceArea8[3],x_value,y_value,  yawangle)){
     Strategy=MapTrace8;
     Max_Forward = 100;
-    Max_Yawrate = 0.20;
-    Min_Yawrate = -0.20;
+    Max_Yawrate = 2.0;
+    Min_Yawrate = -2.0;
   }
 /*
   else if(Robo_Area_Estimator(StepArea[0],StepArea[1],StepArea[2],StepArea[3],x_value,y_value,yawangle)){
