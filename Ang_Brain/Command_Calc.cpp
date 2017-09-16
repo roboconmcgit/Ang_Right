@@ -8,7 +8,8 @@ using ev3api::Clock;
 #define liting_radius 10; // liting spot radius [mm]
 //#define STEP_DEBUG
 //#define GARAGE_DEBUG
-#define BALANCE_DEBUG
+//#define BALANCE_DEBUG
+#define LUG_DEBUG
 
 
 Clock*       gClock;
@@ -21,8 +22,11 @@ void CommandCalc::init( ){
   gClock       = new Clock();
   Track_Mode = Start_to_1st_Corner;
   Step_Mode  = Step_Start;
-  tail_stand_mode = false;
-  tail_lug_mode = false;
+  LUG_Mode   = LUG_Start;
+
+  mYaw_angle_offset = 0.0;
+  tail_stand_mode   = false;
+  tail_lug_mode     = false;
 
 #ifdef STEP_DEBUG
   //Track_Mode = Return_to_Line;
@@ -33,6 +37,12 @@ void CommandCalc::init( ){
   //Track_Mode = Return_to_Line;
   Track_Mode =  Track_Debug_00;
 #endif
+
+#ifdef LUG_DEBUG
+  Track_Mode = Go_LUG;
+  mYaw_angle_offset = PAI;
+#endif
+
 }
 
 void CommandCalc::SetCurrentData(int   linevalue,
@@ -50,6 +60,7 @@ void CommandCalc::SetCurrentData(int   linevalue,
 				 bool  robo_turn_right,
 				 bool  dansa,
 				 bool  robo_balance_mode,
+				 bool  robo_lug_mode,
 				 int   max_forward,
 				 float max_yawrate,
 				 float min_yawrate
@@ -62,7 +73,7 @@ void CommandCalc::SetCurrentData(int   linevalue,
     mOdo               = odo;
     mSpeed             = speed;
     mYawrate           = yawrate;
-    mYawangle          = abs_angle;
+    mYawangle          = abs_angle + mYaw_angle_offset;
     mTail_angle        = robo_tail_angle;
     mRobo_stop         = robo_stop;
     mRobo_forward      = robo_forward;
@@ -71,6 +82,7 @@ void CommandCalc::SetCurrentData(int   linevalue,
     mRobo_turn_right   = robo_turn_right;
     mDansa             = dansa;
     mRobo_balance_mode = robo_balance_mode;
+    mRobo_lug_mode = robo_lug_mode;
 
     mMax_Forward = max_forward;
     mMax_Yawrate = max_yawrate;
@@ -166,32 +178,40 @@ void CommandCalc::Track_run( ) {
     break;
 
   case Return_to_Line:
-//    forward =  50; // 0910 tada
-    forward =  20; // 0910 tada
-  	if(mYawangle < 0.16 && mLinevalue <20){
-  		dammy_line_value = 50 - 300*(mYawangle-0.1);
-	    if(dammy_line_value > 100){
-		dammy_line_value = 100;
-	    }else if(dammy_line_value < 0){
-	      dammy_line_value = 0;
-	    }
-	    LineTracerYawrate(dammy_line_value);
-  	}
-  	else{
-  		LineTracerYawrate(mLinevalue);
-  	}
-    anglecommand = TAIL_ANGLE_RUN; //0817 tada
+    
+    forward =  20;
+    if(mYawangle < 0.16 && mLinevalue <20){
+      dammy_line_value = 50 - 300*(mYawangle-0.1);
+      if(dammy_line_value > 100){
+	dammy_line_value = 100;
+      }else if(dammy_line_value < 0){
+	dammy_line_value = 0;
+      }
+      LineTracerYawrate(dammy_line_value);
+    }
+    else{
+      LineTracerYawrate(mLinevalue);
+    }
+    anglecommand = TAIL_ANGLE_RUN;
     tail_stand_mode = false;
 
-    if((mYawangle > 1) &&(mRobo_forward == 1)){
-      Track_Mode = Go_Step;
+    if((mYawangle > 2.5) &&(mRobo_forward == 1)){
+      forward =  30;
+      LineTracerYawrate((2*mLinevalue));
+      Track_Mode = Go_LUG;
+      ref_odo    = mOdo + APPROACH_TO_LUG_LENGTH;
     }
-
     break;
 
+  case Go_LUG:
+    forward =  30;
+    LineTracerYawrate((2*mLinevalue));
+    LookUpGateRunner(mLinevalue, mOdo, mYawangle,mLinevalue);
+    break;
+
+    //non used
   case Go_Step:
-    StepRunner(mLinevalue, mOdo, mYawangle, mDansa);
-    ref_odo = mOdo + STEP_TO_GARAGE_LENGTH;
+    
     break;
 
   case Approach_to_Garage:
@@ -306,7 +326,7 @@ void CommandCalc::Track_run( ) {
     forward = 0;
     LineTracerYawrate(mLinevalue);
     anglecommand = TAIL_ANGLE_RUN; //0817 tada
-    tail_stand_mode = true;
+    tail_stand_mode = false;
     break;
   }
 }
@@ -407,19 +427,19 @@ void CommandCalc::StrategyCalcRun(int strategy_num, int virtualgate_num, float x
 	break;
 
 	case LookUpGate:
-		LookUpGateRunner();
+
 	break;
 
 	case Garage:
-		GarageRunner();
+
 	break;
 
 	case Stop:
-		StopRobo();
+
 	break;
 
 	default:
-	  forward = 10;
+
 	break;
 	}
 
@@ -742,9 +762,265 @@ void CommandCalc::StepRunner(int line_value, float odo, float angle, bool dansa)
   }
 }
 
-void CommandCalc::LookUpGateRunner(){
+void CommandCalc::LookUpGateRunner(int line_value_lug, float odo, float angle,int line_value){
 
+  static float y_t;
+  static float ref_odo;
+  static int   stable_cnt;
+
+  switch(LUG_Mode){
+
+  case LUG_Start:
+    forward = 30;
+    LineTracerYawrate((2*line_value));
+    LUG_Mode    = Approach_to_LUG;
+    ref_odo     = odo +  APPROACH_TO_LUG_LENGTH;
+    gForward->init_pid(0.05,0.01,0.001,dT_4ms);
+
+#ifdef LUG_DEBUG
+    ref_odo     = odo +  200;
+#endif
+    break;
+
+  case Approach_to_LUG:
+    forward    = gForward->calc_pid(ref_odo, odo);
+    forward    = forward * 0.5;
+    LineTracerYawrate((2*line_value));
+    anglecommand = TAIL_ANGLE_RUN;
+
+    if((odo > ref_odo - 25 )&&(odo < ref_odo + 25)){
+      stable_cnt++;
+    }
+    if(stable_cnt > 750){ //3sec
+      forward     = 0;
+      yawratecmd  = 0;
+      stable_cnt  = 0;
+      LUG_Mode    = Tail_On_1st;
+    }
+
+    break;
+
+  case Tail_On_1st:
+    tail_stand_mode = true;
+    tail_lug_mode  = false;
+
+    forward    = 0;
+    yawratecmd = 0;
+    if(mRobo_balance_mode == false){
+      forward    = 0;
+      yawratecmd = 0;
+      LUG_Mode = POS_ADJ_1st;
+    }
+    break;
+
+  case POS_ADJ_1st:
+    
+    if(odo < ref_odo){
+      forward         = 15;
+      y_t             = -2.0*(PAI - angle);
+      yawratecmd      = y_t;
+      tail_stand_mode = true;
+      tail_lug_mode  = false;
+    }else{
+      forward         = 0;
+      yawratecmd      = 0;
+      tail_stand_mode = true;
+      tail_lug_mode  = false;
+      LUG_Mode        = LUG_Mode_1st;
+    }
+    break;
+
+
+  case LUG_Mode_1st:
+    forward      = 0;
+    yawratecmd   = 0;
+    tail_lug_mode  = true;
+
+    if(mRobo_lug_mode == true){
+      ref_odo     = odo + LUG_1st_STOP;
+      LUG_Mode    = LUG_1st;
+    }
+    break;
+
+  case LUG_1st:
+
+    forward = forward+0.0001;
+    if(forward >= 10){
+      forward = 10;
+    }
+
+    y_t = -2.0*(PAI - angle);
+    yawratecmd = y_t;
+
+    if(odo > ref_odo){
+      LUG_Mode    = Pre_1st_Turn;
+    }
+    
+    break;
+    
+  case Pre_1st_Turn:
+    forward       = 0;
+    yawratecmd    = 0;
+    tail_lug_mode = false;
+
+    if(mRobo_lug_mode == false){
+      LUG_Mode    = Turn_1st;
+    }
+    
+    break;
+    
+  case Turn_1st:
+      if(angle < 0){
+          forward     = 0;
+          yawratecmd  = 0;
+	  LUG_Mode    = Approach_to_2nd_LUG;
+	  ref_odo     = odo + APPROACH_TO_2nd_LUG;
+      }else{
+	forward = 0;
+	y_t = y_t + 0.005;
+	if(y_t >= 1){
+	  y_t = 1;
+	}
+	yawratecmd = y_t;
+      }
+      break;
+
+  case Approach_to_2nd_LUG:
+    if(odo < ref_odo){
+      forward         = 15;
+      y_t             = -2.0*(0 - angle);
+      yawratecmd      = y_t;
+      tail_stand_mode = true;
+      tail_lug_mode   = false;
+    }else{
+      forward         = 0;
+      yawratecmd      = 0;
+      tail_stand_mode = true;
+      tail_lug_mode   = false;
+      LUG_Mode        = LUG_Mode_2nd;
+    }
+    break;
+
+  case LUG_Mode_2nd:
+    forward      = 0;
+    yawratecmd   = 0;
+    tail_lug_mode  = true;
+
+    if(mRobo_lug_mode == true){
+      ref_odo     = odo + LUG_2nd_STOP;
+      LUG_Mode    = LUG_2nd;
+    }
+    break;
+
+  case LUG_2nd:
+
+    forward = forward+0.0001;
+    if(forward >= 10){
+      forward = 10;
+    }
+
+    y_t = -2.0*(0 - angle);
+    yawratecmd = y_t;
+
+    if(odo > ref_odo){
+      LUG_Mode    = Pre_2nd_Turn;
+    }
+    break;
+
+  case Pre_2nd_Turn:
+    forward       = 0;
+    yawratecmd    = 0;
+    tail_lug_mode = false;
+
+    if(mRobo_lug_mode == false){
+      LUG_Mode    = Turn_2nd;
+    }
+    
+    break;
+
+
+
+  case Turn_2nd:
+    if(angle > PAI){
+          forward     = 0;
+          yawratecmd  = 0;
+	  LUG_Mode    = Approach_to_3rd_LUG;
+	  ref_odo     = odo + APPROACH_TO_3rd_LUG;
+      }else{
+	forward = 0;
+	y_t = y_t - 0.005;
+	if(y_t <= -1){
+	  y_t = -1;
+	}
+	yawratecmd = y_t;
+      }
+      break;
+
+  case Approach_to_3rd_LUG:
+    if(odo < ref_odo){
+      forward         = 15;
+      y_t             = -2.0*(PAI - angle);
+      yawratecmd      = y_t;
+      tail_stand_mode = true;
+      tail_lug_mode   = false;
+    }else{
+      forward         = 0;
+      yawratecmd      = 0;
+      tail_stand_mode = true;
+      tail_lug_mode   = false;
+      LUG_Mode        = LUG_Mode_3rd;
+    }
+    break;
+
+  case LUG_Mode_3rd:
+    forward      = 0;
+    yawratecmd   = 0;
+    tail_lug_mode  = true;
+
+    if(mRobo_lug_mode == true){
+      ref_odo     = odo + LUG_3rd_STOP;
+      LUG_Mode    = LUG_3rd;
+    }
+    break;
+
+  case LUG_3rd:
+
+    forward = forward+0.0001;
+    if(forward >= 10){
+      forward = 10;
+    }
+
+    y_t = -2.0*(PAI - angle);
+    yawratecmd = y_t;
+
+    if(odo > ref_odo){
+      LUG_Mode    = Tail_Stand_Up;
+    }
+    break;
+
+  case Tail_Stand_Up:
+    forward       = 0;
+    yawratecmd    = 0;
+    tail_lug_mode = false;
+
+    if(mRobo_lug_mode == false){
+      //      LUG_Mode    = Turn_2nd;
+    }
+    break;
+
+  default:
+    forward      = 0;
+    yawratecmd   = 0;
+    anglecommand = TAIL_ANGLE_RUN; //0817 tada
+    tail_stand_mode = false;
+    break;
+
+  }
 }
+
+
+
+
 
 void CommandCalc::GarageRunner(){
 

@@ -37,7 +37,7 @@ public:
 			   bool  robo_turn_right,
                            bool  dansa);//あなごの目変数取得
 
-	void setRoboCommand(bool robo_balance_mode);
+	void setRoboCommand(bool robo_balance_mode, bool robo_lug_mode);
 
 	void SetSysMode(int mode);
 
@@ -96,6 +96,7 @@ private:
     bool  mRobo_turn_right = 0;
     bool  mDansa;      //段差検出値
     bool  mRobo_balance_mode;
+    bool  mRobo_lug_mode;
 
     enum Sys_Mode{
       SYS_INIT = 110,

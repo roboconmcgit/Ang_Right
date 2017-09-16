@@ -30,6 +30,7 @@ public:
 			    bool  robo_turn_right,
                             bool  dansa,
 			    bool  robo_balance_mode,
+			    bool  robo_lug_mode,
 			    int   max_forward,
 			    float max_yawrate,
 			    float min_yawrate
@@ -53,7 +54,7 @@ private:
     void LineTracerYawrate(int line_value);              //ライントレース（ヨーレート）
     void MapTracer(int virtualgate_num, float mXvalue, float mYvalue, float mYawangle);  //仮想ゲート走行 0827 tada
     void StepRunner(int line_value, float odo, float angle, bool dansa);//段差走行
-    void LookUpGateRunner();                             //ルックアップゲート走行
+    void LookUpGateRunner(int line_value_lug, float odo, float angle,int line_value);
     void GarageRunner();                                 //ガレージ走行
     void StopRobo();                                     //ロボット停止
 
@@ -111,6 +112,7 @@ private:
       Dead_Zone,
       Return_to_Line,
       Go_Step,
+      Go_LUG,
       Approach_to_Garage,
       Return_to_Line_Garage,
       Garage_In,
@@ -147,11 +149,37 @@ private:
       End_of_Step
     };
     
+    enum enumLUG_Mode{
+      LUG_Start,
+
+      Approach_to_LUG,
+      Tail_On_1st,
+      POS_ADJ_1st,
+      LUG_Mode_1st,
+      LUG_1st,
+      Pre_1st_Turn,
+      Turn_1st,
+
+      Approach_to_2nd_LUG,
+      LUG_Mode_2nd,
+      LUG_2nd,
+      Pre_2nd_Turn,
+      Turn_2nd,
+
+      Approach_to_3rd_LUG,
+      LUG_Mode_3rd,
+      LUG_3rd,
+
+      Tail_Stand_Up,
+
+      LUG_Debug_00
+    };
+
     enumStrategy    Strategy;
     enumVirtualGate VirtualGate;
     enumTrack_Mode  Track_Mode;
     enumStep_Mode   Step_Mode;
-
+    enumLUG_Mode    LUG_Mode;
 
     
     int   Mmode;
@@ -163,6 +191,9 @@ private:
     float mYawrate;   //ヨーレート
     float mYawangle;  //ヨー角
     int   mTail_angle;
+    float mYaw_angle_offset;
+
+    float ref_x;
     //signals for robo movement
     bool  mRobo_stop       = 0;
     bool  mRobo_forward    = 0;
@@ -172,6 +203,7 @@ private:
 
     bool  mDansa;      //段差検出値
     bool  mRobo_balance_mode;
+    bool  mRobo_lug_mode;
     int   mMax_Forward;
     float mMax_Yawrate;
     float mMin_Yawrate;

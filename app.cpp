@@ -2,6 +2,7 @@
 //Date:2017.7.25
 //Author:Kaoru Ota
 //https://github.com/roboconmcgit/Ang_Right
+
 #include "app.h"
 #include "util.h"
 #include "ev3api.h"
@@ -503,7 +504,7 @@ void eye_task(intptr_t exinf) {
                               gAng_Eye->dansa
 			      );//指令値をあなごの脳みそに渡す
 
-    gAng_Brain->setRoboCommand(gAng_Robo->balance_mode);//指令値をあなごの脳みそに渡す
+    gAng_Brain->setRoboCommand(gAng_Robo->balance_mode, gAng_Robo->lug_mode);//指令値をあなごの脳みそに渡す
   }
   ext_tsk();
 }

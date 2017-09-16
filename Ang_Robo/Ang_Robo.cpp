@@ -59,7 +59,7 @@ void Ang_Robo::init() {
   
   mBalancer->init(offset);
   balance_mode = true; 
-
+  lug_mode     = false;
 
   gTail_pwm->init_pid(0, 0, 0, 1); //it would be chanbed bellow 
   //  gTail_pwm->init_pid(1, 0.005, 0.001, dT_4ms);    
@@ -341,6 +341,7 @@ void Ang_Robo::tail_stand_from_balance(){
 
   case Tail_Stand:
     //tail_control(TAIL_ANGLE_DANSA);
+    lug_mode     = false;
 
     if((robo_Clock->now() - clock_start) < 500){
       mForward = 0;
@@ -358,8 +359,8 @@ void Ang_Robo::tail_stand_from_balance(){
     break;
 
   case Tail_Lug:
-    mForward = 0;
-    mTurn = 0;
+    //    mForward = 0;
+    //    mTurn = 0;
     balance_off_en = true;
 
 
@@ -367,6 +368,7 @@ void Ang_Robo::tail_stand_from_balance(){
       clock_start = robo_Clock->now();
       tail_control(TAIL_ANGLE_LUG);
       mTail_Motor.setBrake(true);
+      lug_mode     = true;
     }else{
       target_tail_angle = target_tail_angle - 0.05;
       tail_control(target_tail_angle);

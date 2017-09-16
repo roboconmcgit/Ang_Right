@@ -39,7 +39,21 @@ float DEAD_ZONE_LENGTH      =  200.0; //0915 tada
 float FST_DANSA_POS         =  260;
 float SCD_DANSA_POS         =  260;
 
+//LUG
+float APPROACH_TO_LUG_LENGTH     = 650;
+float APPROACH_TO_2nd_LUG        = 50;
+float APPROACH_TO_3rd_LUG        = 50;
+
+
+float LUG_1st_STOP           = 250;
+float LUG_2nd_STOP           = 250;
+float LUG_3rd_STOP           = 250;
+
+//Parameter of Garage
 float STEP_TO_GARAGE_LENGTH = 1100;
+float GARAGE_X_POS          = 1100;
+float GARAGE_LENGTH         =  150;
+
 
 //Parameter of Area
 

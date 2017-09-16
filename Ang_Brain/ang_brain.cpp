@@ -37,6 +37,7 @@ void Ang_Brain::run() {
 			       mRobo_turn_right,
 			       mDansa,
 			       mRobo_balance_mode,
+			       mRobo_lug_mode,
 			       gStrategyDet->Max_Forward,
 			       gStrategyDet->Max_Yawrate,
 			       gStrategyDet->Min_Yawrate
@@ -97,8 +98,10 @@ void Ang_Brain::setEyeCommand(int linevalue,
 }
 
 
-void Ang_Brain::setRoboCommand(bool robo_balance_mode){
+void Ang_Brain::setRoboCommand(bool robo_balance_mode, bool robo_lug_mode){
   mRobo_balance_mode = robo_balance_mode;
+  mRobo_lug_mode     = robo_lug_mode;
+
 }
 
 void Ang_Brain::SetSysMode(int mode) {

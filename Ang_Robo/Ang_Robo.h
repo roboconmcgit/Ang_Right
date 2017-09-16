@@ -46,6 +46,7 @@ public:
 
     int   offset;    
     bool  balance_mode;
+    bool  lug_mode;
 
     int   log_forward;
     int   log_turn;

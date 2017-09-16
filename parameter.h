@@ -52,6 +52,19 @@ extern float FST_DANSA_POS;
 extern float SCD_DANSA_POS;
 extern float STEP_TO_GARAGE_LENGTH;
 
+//LUG
+extern float APPROACH_TO_LUG_LENGTH;
+extern float APPROACH_TO_2nd_LUG;
+extern float APPROACH_TO_3rd_LUG;
+
+extern float LUG_1st_STOP;
+extern float LUG_2nd_STOP;
+extern float LUG_3rd_STOP;
+
+//Parameter of Garage
+extern float STEP_TO_GARAGE_LENGTH;
+extern float GARAGE_X_POS;
+extern float GARAGE_LENGTH;
 
 //Parameter of Area
 extern float LineTrace1Area[4];
