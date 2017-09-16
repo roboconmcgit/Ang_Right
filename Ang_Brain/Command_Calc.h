@@ -118,7 +118,8 @@ private:
       Track_Debug_00,
       Track_Debug_01,
       Track_Debug_02,
-      Track_Debug_03
+      Track_Debug_03,
+      Track_Debug_04
     };
 
     enum enumStep_Mode{

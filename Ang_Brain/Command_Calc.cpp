@@ -266,15 +266,28 @@ void CommandCalc::Track_run( ) {
     break;
 
   case Track_Debug_03:
-      tail_stand_mode = true;
-      tail_lug_mode = true;
 
-    if(gClock->now() - clock_start > 9000){
-      tail_lug_mode = false;
+    if(gClock->now() - clock_start > 5000){
+      tail_lug_mode   = false;
       tail_stand_mode = true;
-      clock_start = gClock->now();
+      clock_start     = gClock->now();
+      Track_Mode      = Track_Debug_04;
+    }else{
+      tail_stand_mode = true;
+      tail_lug_mode   = true;
     }
 
+    break;
+
+  case Track_Debug_04:
+
+    if(gClock->now() - clock_start > 5000){
+      tail_stand_mode = false;
+      tail_lug_mode   = false;
+    }else{
+      tail_stand_mode = true;
+      tail_lug_mode   = false;
+    }
     break;
 
 

@@ -340,6 +340,8 @@ void Ang_Robo::tail_stand_from_balance(){
     break;
 
   case Tail_Stand:
+    //tail_control(TAIL_ANGLE_DANSA);
+
     if((robo_Clock->now() - clock_start) < 500){
       mForward = 0;
       mTurn = 0;
@@ -362,7 +364,6 @@ void Ang_Robo::tail_stand_from_balance(){
 
 
     if(mTail_Motor.getCount() <= TAIL_ANGLE_LUG){
-      //Stand_Mode = Tail_On;
       clock_start = robo_Clock->now();
       tail_control(TAIL_ANGLE_LUG);
       mTail_Motor.setBrake(true);
@@ -380,39 +381,22 @@ void Ang_Robo::tail_stand_from_balance(){
 
   case Lug_to_Stand:
     balance_off_en = true;
-
-
     mTurn = 0;
 
-    if(mTail_Motor.getCount() < TAIL_ANGLE_DANSA){
+    if(mTail_Motor.getCount() < 75){
       mForward = -100;
       mTail_Motor.setPWM(100);
     }else{
       mForward = 0;
-      mTail_Motor.setPWM(0);
-    }
-    /*
-    if(target_tail_angle <= TAIL_ANGLE_DANSA){
-      //      target_tail_angle = target_tail_angle + 0.05;
-      target_tail_angle = target_tail_angle + 0.5;
-    }
-    if(mTail_Motor.getCount() >= TAIL_ANGLE_DANSA){
       tail_control(TAIL_ANGLE_DANSA);
-      Stand_Mode = Tail_Stand;
-      clock_start = robo_Clock->now();
+      target_tail_angle = TAIL_ANGLE_DANSA;
+      if(mTail_Motor.getCount() >= TAIL_ANGLE_DANSA){
+	mTail_Motor.setBrake(true);
+	mTail_Motor.setPWM(0);
+	Stand_Mode = Tail_Stand;
+	clock_start = robo_Clock->now();
+      }
     }
-    tail_control(target_tail_angle);
-    */
-
-    /*
-    if(mTail_Motor.getCount() < 96){
-      //      target_tail_angle = target_tail_angle + 1;
-      mTail_Motor.setPWM(100);
-    }else{
-      tail_control(96);
-      clock_start = robo_Clock->now();
-      //      Stand_Mode = Stand_to_Balance;
-      }*/
 
     break;
 
@@ -420,6 +404,7 @@ void Ang_Robo::tail_stand_from_balance(){
     mForward = 0;
     mTurn    = 0; 
     balance_off_en = true;
+    mTail_Motor.setBrake(false);
     if(mTail_Motor.getCount() >= 95){
       tail_control(96);
       clock_start = robo_Clock->now();
