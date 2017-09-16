@@ -53,7 +53,10 @@ void Ang_Brain::run() {
   GetCalcResult(gCommandCalc->forward,
 		gCommandCalc->yawratecmd,
 		gCommandCalc->anglecommand,
-		gCommandCalc->tail_mode_lflag);   //8: 走行戦略の計算結果を取得
+		//		gCommandCalc->tail_mode_lflag);   //8: 走行戦略の計算結果を取得
+		gCommandCalc->tail_stand_mode,
+		gCommandCalc->tail_lug_mode);   //8: 走行戦略の計算結果を取得
+
 }
 
 void Ang_Brain::setEyeCommand(int linevalue,
@@ -108,11 +111,15 @@ void Ang_Brain::GetStrategy(int strategy_num, int virtualgate_num){
 void Ang_Brain::GetCalcResult(int forward_calc,
 			      float yawratecmd_calc,
 			      float anglecommand_calc,
-			      bool tail_mode_lflag_calc){
+			      //			      bool tail_mode_lflag_calc){
+			      bool tail_stand_mode_calc,
+			      bool tail_lug_mode_calc){
   
   forward         = forward_calc;
   yawratecmd      = yawratecmd_calc;
   anglecommand    = anglecommand_calc;
-  tail_mode_lflag = tail_mode_lflag_calc;
+  //  tail_mode_lflag = tail_mode_lflag_calc;
+  tail_stand_mode = tail_stand_mode_calc;
+  tail_lug_mode   = tail_lug_mode_calc;
 }
 

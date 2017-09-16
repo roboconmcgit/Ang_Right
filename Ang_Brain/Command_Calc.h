@@ -41,7 +41,9 @@ public:
 	int   forward;         //前進目標値
 	float yawratecmd;      //目標ヨーレート
 	float anglecommand;    //尻尾角度
-	bool  tail_mode_lflag; //倒立走行フラグ
+	//	bool  tail_mode_lflag; //倒立走行フラグ
+	bool  tail_stand_mode;
+	bool  tail_lug_mode;
 
 private:
 
@@ -179,7 +181,7 @@ private:
     float pg = 0.35;//暫定0.9 //0818 tada
     float df = 0.024;//暫定-0.1 //0818 tada
 	
-	int line_detect_flag = 0;
-	int map2line_flag = 0;
+    int line_detect_flag = 0;
+    int map2line_flag = 0;
 
 };

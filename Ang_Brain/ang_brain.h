@@ -46,7 +46,9 @@ public:
     int   forward;         //前進目標値
     float yawratecmd;      //目標ヨーレート
     float anglecommand;    //尻尾角度
-    bool  tail_mode_lflag; //倒立走行フラグ
+    //    bool  tail_mode_lflag; //倒立走行フラグ
+    bool  tail_stand_mode;
+    bool  tail_lug_mode;
 
     int SysModeNum;
     int StrategyNum;   //走行戦略
@@ -71,7 +73,8 @@ private:
     void GetCalcResult(int forward_calc,
 		       float yawratecmd_calc,
 		       float anglecommand_calc,
-		       bool tail_mode_lflag_calc);     //走行戦略の計算結果を取得
+		       bool tail_stand_mode_calc,
+		       bool tail_lug_mode_calc);
 
     StrategyDet *gStrategyDet = new StrategyDet();
     CommandCalc *gCommandCalc = new CommandCalc();

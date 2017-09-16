@@ -1,7 +1,7 @@
 //Anago System
 //Date:2017.7.25
 //Author:Kaoru Ota
-
+//https://github.com/roboconmcgit/Ang_Right
 #include "app.h"
 #include "util.h"
 #include "ev3api.h"
@@ -34,8 +34,8 @@ using ev3api::Clock;
 #define CALIB_FONT        (EV3_FONT_MEDIUM)
 #define CALIB_FONT_WIDTH  (6/*TODO: magic number*/)
 #define CALIB_FONT_HEIGHT (20/*TODO: magic number*/)
-//#define LOG_RECORD
-//#define RIGHT_COURCE_MODE
+#define LOG_RECORD
+#define RIGHT_COURCE_MODE
 //#define EYE_DEBUG
 
 // Device objects
@@ -90,9 +90,17 @@ static int   log_dat_00[10000];
 static int   log_dat_01[10000];
 static int   log_dat_02[10000];
 static int   log_dat_03[10000];
-static float log_fdat_00[10000];
-static float log_fdat_01[10000];    
-static float log_fdat_02[10000];
+static int   log_dat_04[10000];
+static int   log_dat_05[10000];
+static int   log_dat_06[10000];
+//static int   log_dat_07[10000];
+
+/*
+static float log_fdat_00[15000];
+static float log_fdat_01[15000];    
+static float log_fdat_02[15000];
+*/
+
 #endif
 
 //System Initialization
@@ -131,7 +139,7 @@ static void sys_initialize() {
 
   ev3_lcd_fill_rect(0, 0, EV3_LCD_WIDTH, EV3_LCD_HEIGHT, EV3_LCD_WHITE);
   ev3_lcd_set_font(EV3_FONT_MEDIUM);
-  ev3_lcd_draw_string("Left vGATE",0, 20);
+  ev3_lcd_draw_string("Right vGATE",0, 20);
 
   ev3_lcd_draw_string(battery_str,0, 40);
   ev3_lcd_draw_string("Set ANG on GND",0, 60);
@@ -167,7 +175,6 @@ static void sys_initialize() {
   ev3_speaker_play_tone(NOTE_E4,200);
   ev3_lcd_fill_rect(0, 0, EV3_LCD_WIDTH, EV3_LCD_HEIGHT, EV3_LCD_WHITE);
 
-
   /* Open Bluetooth file */
   bt = ev3_serial_open_file(EV3_SERIAL_BT);
   assert(bt != NULL);
@@ -193,14 +200,45 @@ static void sys_destroy(){
 
 #ifdef LOG_RECORD
 static void log_dat( ){
+  /*
+  log_dat_00[log_cnt]  = gAng_Brain->tail_mode_lflag;
+  log_dat_01[log_cnt]  = gAng_Robo-> log_forward;
+  log_dat_02[log_cnt]  = gAng_Robo-> log_gyro;
+  log_dat_03[log_cnt]  = gTailMotor.getCount();
 
-  log_dat_00[log_cnt]  = gAng_Eye->robo_forward;
-  log_dat_01[log_cnt]  = gAng_Eye->robo_turn_left;
-  log_dat_02[log_cnt]  = gAng_Eye->odo;
-  log_dat_03[log_cnt]  = gAng_Eye->dansa;
+  log_dat_04[log_cnt]  = gAng_Robo-> log_left_wheel_enc;
+  log_dat_05[log_cnt]  = gAng_Robo-> log_battery;
+  log_dat_06[log_cnt]  = gAng_Robo-> log_left_pwm;
+  log_dat_07[log_cnt]  = gAng_Robo-> log_right_pwm;
+  */
+  /*
+  log_dat_00[log_cnt]  = gAng_Eye->dansa;
+  log_dat_01[log_cnt]  = gAng_Eye->odo;
+  log_dat_02[log_cnt]  = gAng_Robo-> log_gyro;
+  log_dat_03[log_cnt]  =  gAng_Robo-> log_forward;
+
+  log_dat_04[log_cnt]  = gTailMotor.getCount();
+  log_dat_05[log_cnt]  = gAng_Robo-> log_left_pwm;
+  log_dat_06[log_cnt]  = (int)gAng_Eye->xvalue;
+  log_dat_07[log_cnt]  = (int)gAng_Eye->yvalue;
+  */
+
+  log_dat_00[log_cnt]  = gAng_Eye->dansa;
+  log_dat_01[log_cnt]  = gAng_Eye->odo;
+  log_dat_02[log_cnt]  = gAng_Eye->linevalue;
+  log_dat_03[log_cnt]  = gAng_Robo-> log_forward;
+
+  log_dat_04[log_cnt]  = gAng_Eye->abs_angle;
+  log_dat_05[log_cnt]  = (int)gAng_Eye->xvalue;
+  log_dat_06[log_cnt]  = (int)gAng_Eye->yvalue;
+
+
+
+  /*
   log_fdat_00[log_cnt] = gAng_Eye->abs_angle;
-  log_fdat_01[log_cnt] = gAng_Eye->yawrate;
-  log_fdat_02[log_cnt] = gAng_Eye->velocity;
+  log_fdat_01[log_cnt] = gAng_Robo->log_right_pwm;
+  log_fdat_02[log_cnt] = gAng_Eye->odo;
+  */
 
   log_cnt++;
   if (log_cnt == log_size){
@@ -212,16 +250,16 @@ static void export_log_dat( ){
     FILE* file_id;
     int battery = ev3_battery_voltage_mV();
     file_id = fopen( "log_dat.csv" ,"w");
-    fprintf(file_id, "battery:%d\n",battery);
-    fprintf(file_id, "cnt,forward,left,odo,dansa,angle,yawrate,velocity\n");
+    fprintf(file_id, "dansa,odo,line,forward,angle,x,y\n");
     int cnt;
 
     for(cnt = 0; cnt < log_size ; cnt++){
-      fprintf(file_id, "%d,%d,%d,%d,%d,%f,%f,%f\n",cnt, log_dat_00[cnt],log_dat_01[cnt], log_dat_02[cnt],log_dat_03[cnt],log_fdat_00[cnt],log_fdat_01[cnt], log_fdat_02[cnt]);
+      fprintf(file_id, "%d,%d,%d,%d,%d,%d,%d\n",log_dat_00[cnt],log_dat_01[cnt], log_dat_02[cnt],log_dat_03[cnt],log_dat_04[cnt],log_dat_05[cnt],log_dat_06[cnt]);
     }
     fclose(file_id);
 }
 #endif
+
 
 //*****************************************************************************
 // 関数名 : color_sensor_calibration
@@ -488,7 +526,8 @@ void brain_task(intptr_t exinf) {
                             gAng_Brain->yawratecmd,
                             gAng_Brain->anglecommand,
                             gAng_Eye->yawrate,
-                            gAng_Brain->tail_mode_lflag);//指令値をあなご手足に渡す
+                            gAng_Brain->tail_stand_mode,
+			    gAng_Brain->tail_lug_mode);//指令値をあなご手足に渡す
     }
     ext_tsk();
 }
@@ -511,7 +550,7 @@ void robo_task(intptr_t exinf) {
     wup_tsk(MAIN_TASK);  // バックボタン押下
   } else {
     gAng_Robo->run();
-    //kota 0811      gAng_Robo->saveData(500);
+    //gAng_Robo->run_anago_run();
   }
   ext_tsk();
 }
@@ -519,11 +558,25 @@ void robo_task(intptr_t exinf) {
 
 //Main Task
 void main_task(intptr_t unused) {
+  ev3_lcd_fill_rect(0, 0, EV3_LCD_WIDTH, EV3_LCD_HEIGHT, EV3_LCD_WHITE);
+  ev3_lcd_set_font(EV3_FONT_MEDIUM);
+  ev3_lcd_draw_string("RIGHT : MIGI",0, 40);
+
   sys_initialize();
 
   //calibrate color sensor and set threshold of anago eye
   mSys_Mode = CALIB_COLOR_SENSOR;
   color_sensor_calibration();
+  
+  //  if((white < 30)||(black > 10)||(black > white)||(white_slant < 30)||(black_slant > 10)||(black_slant > white_slant) ){
+  if((white < 30)||(black > 10)||(black > white)||(black_slant > white_slant)){
+    ev3_lcd_fill_rect(0, 0, EV3_LCD_WIDTH, EV3_LCD_HEIGHT, EV3_LCD_WHITE);
+    ev3_lcd_set_font(EV3_FONT_MEDIUM);
+    ev3_lcd_draw_string("Warning Calib ERROR",0, 40);
+    tslp_tsk(1000);
+    color_sensor_calibration();
+  }
+
   gAng_Eye->set_White_Black_Threshold(white,black,white_slant,black_slant);
 
   //REDAY for START

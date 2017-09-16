@@ -2,7 +2,7 @@
 #include "util.h"
 #include <math.h>
 
-#define EMG_TH_V 380
+#define EMG_TH_V 350
 #define EMG_TH_N 250
 #define EMG_TH_C 100
 
@@ -51,10 +51,10 @@ PID::PID(){
 }
 
 void PID::init_pid(float kp, float ki, float kd, float dT){
-  KP=0;
-  TI=0;
-  TD=0;
-  DT=1;
+  KP=kp;
+  TI=ki;
+  TD=kd;
+  DT=dT;
   
   error_old=0;
   error_P_old=0;		//過去の偏差
