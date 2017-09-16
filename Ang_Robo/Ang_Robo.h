@@ -84,6 +84,7 @@ private:
       Tail_On,
       Tail_Stand,
       Tail_Lug,
+      Lug_to_Stand,
       Stand_Vert,
       Stand_to_Balance,
       Tail_for_Run,

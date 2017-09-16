@@ -223,7 +223,7 @@ static void log_dat( ){
   log_dat_07[log_cnt]  = (int)gAng_Eye->yvalue;
   */
 
-  log_dat_00[log_cnt]  = gAng_Eye->dansa;
+  log_dat_00[log_cnt]  = gTailMotor.getCount();;
   log_dat_01[log_cnt]  = gAng_Eye->odo;
   log_dat_02[log_cnt]  = gAng_Eye->linevalue;
   log_dat_03[log_cnt]  = gAng_Robo-> log_forward;
@@ -250,7 +250,7 @@ static void export_log_dat( ){
     FILE* file_id;
     int battery = ev3_battery_voltage_mV();
     file_id = fopen( "log_dat.csv" ,"w");
-    fprintf(file_id, "dansa,odo,line,forward,angle,x,y\n");
+    fprintf(file_id, "tail,odo,line,forward,angle,x,y\n");
     int cnt;
 
     for(cnt = 0; cnt < log_size ; cnt++){

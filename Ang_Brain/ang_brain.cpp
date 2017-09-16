@@ -2,7 +2,7 @@
 #include "ev3api.h"
 #include "ang_brain.h"
 #define liting_radius 10; // liting spot radius [mm]
-//#define DEBUG
+#define DEBUG
 
 Ang_Brain::Ang_Brain() {
 
@@ -42,14 +42,20 @@ void Ang_Brain::run() {
 			       gStrategyDet->Min_Yawrate
 			       );      //6: ロボットの現在情報を取得
 
-	
-	if(Strategy == Goal){
+  /*
+  if(Strategy == Goal){
     gCommandCalc->Track_run();
-	}
-	else{
-		  gCommandCalc->StrategyCalcRun(StrategyNum,VirtualGateNum,mXvalue,mYvalue,mYawangle);//7: 走行戦略を計算
-	}
-  
+  }
+  else{
+    gCommandCalc->StrategyCalcRun(StrategyNum,VirtualGateNum,mXvalue,mYvalue,mYawangle);//7: 走行戦略を計算
+    }*/
+
+#ifdef DEBUG
+    gCommandCalc->Track_run();
+#endif
+
+
+
   GetCalcResult(gCommandCalc->forward,
 		gCommandCalc->yawratecmd,
 		gCommandCalc->anglecommand,

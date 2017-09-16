@@ -117,7 +117,8 @@ private:
       Stop_Robo,
       Track_Debug_00,
       Track_Debug_01,
-      Track_Debug_02
+      Track_Debug_02,
+      Track_Debug_03
     };
 
     enum enumStep_Mode{

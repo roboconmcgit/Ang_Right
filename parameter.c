@@ -2,7 +2,8 @@
 int TAIL_ANGLE_STAND_UP = 98; /* 完全停止時の角度[度]     */
 int TAIL_ANGLE_RUN      =  3; /* バランス走行時の角度[度] */
 int TAIL_ANGLE_DANSA    = 85; /* 完全停止時の角度[度]     */
-int TAIL_ANGLE_LUG      = 75; /* 3点移動時の角度[度]      */
+int TAIL_ANGLE_LUG      = 65
+; /* 3点移動時の角度[度]      */
 int TAIL_ANGLE_GARAGE   = 94; /* 完全停止時の角度[度]     */
 
 float WheelDiameter = 79.95;  //背面から見て左タイヤの直径[mm] 0817 tada

@@ -8,7 +8,7 @@ using ev3api::Clock;
 #define liting_radius 10; // liting spot radius [mm]
 //#define STEP_DEBUG
 //#define GARAGE_DEBUG
-//#define BALANCE_DEBUG
+#define BALANCE_DEBUG
 
 
 Clock*       gClock;
@@ -254,6 +254,31 @@ void CommandCalc::Track_run( ) {
     break;
 
   case Track_Debug_02:
+      tail_stand_mode = true;
+
+    if(gClock->now() - clock_start > 3000){
+      tail_lug_mode = true;
+      tail_stand_mode = true;
+      clock_start = gClock->now();
+      Track_Mode = Track_Debug_03;
+    }
+
+    break;
+
+  case Track_Debug_03:
+      tail_stand_mode = true;
+      tail_lug_mode = true;
+
+    if(gClock->now() - clock_start > 9000){
+      tail_lug_mode = false;
+      tail_stand_mode = true;
+      clock_start = gClock->now();
+    }
+
+    break;
+
+
+    /*  case Track_Debug_02:
     anglecommand = TAIL_ANGLE_RUN;
     if(gClock->now() - clock_start > 3000){
       tail_stand_mode = false;
@@ -262,6 +287,7 @@ void CommandCalc::Track_run( ) {
       Track_Mode = Track_Debug_00;
     }
     break;
+    */
 
   default:
     forward = 0;
