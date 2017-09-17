@@ -21,21 +21,21 @@ public:
 	explicit Ang_Brain();//コンストラクタ
 	void init();
 	void run();            //走行戦略を実行
-	void setEyeCommand(int linevalue,
-			   float xvalue,
-			   float yvalue,
-			   float odo,
-                           float speed,
-			   float yawrate,
-//			   float yawangle,
-			   float abs_angle,
-			   int   robo_tail_angle,
-			   bool  robo_stop,
-			   bool  robo_forward,
-			   bool  robo_back,
-			   bool  robo_turn_left,
-			   bool  robo_turn_right,
-                           bool  dansa);//あなごの目変数取得
+	void setEyeCommand(int     linevalue,
+			   float   xvalue,
+			   float   yvalue,
+			   float   odo,
+                           float   speed,
+			   float   yawrate,
+			   float   abs_angle,
+			   int     robo_tail_angle,
+			   bool    robo_stop,
+			   bool    robo_forward,
+			   bool    robo_back,
+			   bool    robo_turn_left,
+			   bool    robo_turn_right,
+                           bool    dansa,
+			   int16_t sonar_dis);
 
 	void setRoboCommand(bool robo_balance_mode, bool robo_lug_mode);
 
@@ -89,14 +89,15 @@ private:
     float mYawangle;   //ヨー角
     int   mTail_angle;
     //signals for robo movement
-    bool  mRobo_stop       = 0;
-    bool  mRobo_forward    = 0;
-    bool  mRobo_back       = 0;
-    bool  mRobo_turn_left  = 0;
-    bool  mRobo_turn_right = 0;
-    bool  mDansa;      //段差検出値
-    bool  mRobo_balance_mode;
-    bool  mRobo_lug_mode;
+    bool    mRobo_stop       = 0;
+    bool    mRobo_forward    = 0;
+    bool    mRobo_back       = 0;
+    bool    mRobo_turn_left  = 0;
+    bool    mRobo_turn_right = 0;
+    bool    mDansa;      //段差検出値
+    int16_t mSonar_dis;
+    bool    mRobo_balance_mode;
+    bool    mRobo_lug_mode;
 
     enum Sys_Mode{
       SYS_INIT = 110,

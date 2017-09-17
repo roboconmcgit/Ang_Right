@@ -36,6 +36,7 @@ void Ang_Brain::run() {
 			       mRobo_turn_left,
 			       mRobo_turn_right,
 			       mDansa,
+			       mSonar_dis,
 			       mRobo_balance_mode,
 			       mRobo_lug_mode,
 			       gStrategyDet->Max_Forward,
@@ -66,20 +67,21 @@ void Ang_Brain::run() {
 
 }
 
-void Ang_Brain::setEyeCommand(int linevalue,
-			      float xvalue,
-			      float yvalue,
-			      float odo,
-			      float speed,
-			      float yawrate,
-			      float abs_angle,
-			      int   robo_tail_angle,
-			      bool  robo_stop,
-			      bool  robo_forward,
-			      bool  robo_back,
-			      bool  robo_turn_left,
-			      bool  robo_turn_right,
-			      bool  dansa) {
+void Ang_Brain::setEyeCommand(int     linevalue,
+			      float   xvalue,
+			      float   yvalue,
+			      float   odo,
+			      float   speed,
+			      float   yawrate,
+			      float   abs_angle,
+			      int     robo_tail_angle,
+			      bool    robo_stop,
+			      bool    robo_forward,
+			      bool    robo_back,
+			      bool    robo_turn_left,
+			      bool    robo_turn_right,
+			      bool    dansa,
+			      int16_t sonar_dis){
   
   mLinevalue       = linevalue;
   mXvalue          = xvalue;
@@ -95,6 +97,7 @@ void Ang_Brain::setEyeCommand(int linevalue,
   mRobo_turn_left  = robo_turn_left;
   mRobo_turn_right = robo_turn_right;
   mDansa           = dansa;
+  mSonar_dis       = sonar_dis;
 }
 
 

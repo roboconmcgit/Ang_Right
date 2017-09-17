@@ -15,25 +15,26 @@ public:
 	explicit CommandCalc();//コンストラクタ
 
 	void init ();
-	void SetCurrentData(int   linevalue,
-                            float xvalue,
-                            float yvalue,
-			    float odo,                
-			    float speed,
-                            float yawrate,
-                            float abs_angle,
-			    int   robo_tail_angle,
-			    bool  robo_stop,
-			    bool  robo_forward,
-			    bool  robo_back,
-			    bool  robo_turn_left,
-			    bool  robo_turn_right,
-                            bool  dansa,
-			    bool  robo_balance_mode,
-			    bool  robo_lug_mode,
-			    int   max_forward,
-			    float max_yawrate,
-			    float min_yawrate
+	void SetCurrentData(int     linevalue,
+                            float   xvalue,
+                            float   yvalue,
+			    float   odo,                
+			    float   speed,
+                            float   yawrate,
+                            float   abs_angle,
+			    int     robo_tail_angle,
+			    bool    robo_stop,
+			    bool    robo_forward,
+			    bool    robo_back,
+			    bool    robo_turn_left,
+			    bool    robo_turn_right,
+                            bool    dansa,
+			    int16_t sonar_dis,
+			    bool    robo_balance_mode,
+			    bool    robo_lug_mode,
+			    int     max_forward,
+			    float   max_yawrate,
+			    float   min_yawrate
 			    );//ロボの現在情報を取得
 
 	void StrategyCalcRun(int strategy_num, int virtualgate_num, float xvalue, float yvalue, float yawangle);//走行戦略を計算
@@ -121,7 +122,8 @@ private:
       Track_Debug_01,
       Track_Debug_02,
       Track_Debug_03,
-      Track_Debug_04
+      Track_Debug_04,
+      Track_Debug_10
     };
 
     enum enumStep_Mode{
@@ -202,6 +204,8 @@ private:
     bool  mRobo_turn_right = 0;
 
     bool  mDansa;      //段差検出値
+    int16_t mSonar_dis;
+
     bool  mRobo_balance_mode;
     bool  mRobo_lug_mode;
     int   mMax_Forward;

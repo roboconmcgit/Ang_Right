@@ -28,6 +28,7 @@ void *__dso_handle=0;
 using ev3api::ColorSensor;
 using ev3api::GyroSensor;
 using ev3api::TouchSensor;
+using ev3api::SonarSensor;
 using ev3api::Motor;
 using ev3api::Clock;
 
@@ -45,10 +46,10 @@ ColorSensor gColorSensor (PORT_3);
 GyroSensor  gGyroSensor  (PORT_4);
 Motor       gLeftWheel   (PORT_C);
 Motor       gRightWheel  (PORT_B);
-Motor       gTailMotor   (PORT_A); //2017.07.28 k-ota add
+Motor       gTailMotor   (PORT_A);
 TouchSensor gTouchSensor (PORT_1);
+SonarSensor gSonarSensor (PORT_2);
 
-//Clock       gClock;
 
 
 enum Sys_Mode{
@@ -121,7 +122,8 @@ static void sys_initialize() {
   gAng_Eye   = new Ang_Eye(gColorSensor,
 			   gLeftWheel,
 			   gRightWheel,
-			   gGyroSensor);
+			   gGyroSensor,
+			   gSonarSensor);
 
   gAng_Brain = new Ang_Brain();
   gAng_Robo  = new Ang_Robo(gGyroSensor,
@@ -223,8 +225,7 @@ static void log_dat( ){
   log_dat_06[log_cnt]  = (int)gAng_Eye->xvalue;
   log_dat_07[log_cnt]  = (int)gAng_Eye->yvalue;
   */
-
-  log_dat_00[log_cnt]  = gTailMotor.getCount();;
+  log_dat_00[log_cnt]  = gAng_Eye->sonarDistance;
   log_dat_01[log_cnt]  = gAng_Eye->odo;
   log_dat_02[log_cnt]  = gAng_Eye->linevalue;
   log_dat_03[log_cnt]  = gAng_Robo-> log_forward;
@@ -251,7 +252,7 @@ static void export_log_dat( ){
     FILE* file_id;
     int battery = ev3_battery_voltage_mV();
     file_id = fopen( "log_dat.csv" ,"w");
-    fprintf(file_id, "tail,odo,line,forward,angle,x,y\n");
+    fprintf(file_id, "sonar,odo,line,forward,angle,x,y\n");
     int cnt;
 
     for(cnt = 0; cnt < log_size ; cnt++){
@@ -488,6 +489,8 @@ void eye_task(intptr_t exinf) {
     gAng_Eye->det_Line_Value();
     gAng_Eye->WheelOdometry(dT_4ms);
     gAng_Eye->det_Dansa();
+    gAng_Eye->setSonarDistance();
+
     gAng_Brain->setEyeCommand(gAng_Eye->linevalue,
                               gAng_Eye->xvalue,
                               gAng_Eye->yvalue,
@@ -501,8 +504,8 @@ void eye_task(intptr_t exinf) {
 			      gAng_Eye->robo_back,
 			      gAng_Eye->robo_turn_left,
 			      gAng_Eye->robo_turn_right,
-                              gAng_Eye->dansa
-			      );//指令値をあなごの脳みそに渡す
+                              gAng_Eye->dansa,
+			      gAng_Eye->sonarDistance);//指令値をあなごの脳みそに渡す
 
     gAng_Brain->setRoboCommand(gAng_Robo->balance_mode, gAng_Robo->lug_mode);//指令値をあなごの脳みそに渡す
   }

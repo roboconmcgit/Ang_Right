@@ -54,6 +54,7 @@ extern float STEP_TO_GARAGE_LENGTH;
 
 //LUG
 extern float APPROACH_TO_LUG_LENGTH;
+extern float STOP_POS_FROM_LUG;
 extern float APPROACH_TO_2nd_LUG;
 extern float APPROACH_TO_3rd_LUG;
 

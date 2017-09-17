@@ -16,12 +16,14 @@ const int8_t Ang_Eye::INITIAL_BLACK_THRESHOLD = 20;  // 黒色の光センサ値
 Ang_Eye::Ang_Eye(const ev3api::ColorSensor& colorSensor,
 		 ev3api::Motor& leftWheel,
 		 ev3api::Motor& rightWheel,
-		 ev3api::GyroSensor& gyro)
+		 ev3api::GyroSensor& gyro,
+		 ev3api::SonarSensor& sonar)
   : 
     mColorSensor(colorSensor),
     mLeftWheel(leftWheel),
     mRightWheel(rightWheel),
     mGyro(gyro),
+    mSonar(sonar),
 
     mWhite(INITIAL_WHITE_THRESHOLD),
     mBlack(INITIAL_BLACK_THRESHOLD),
@@ -90,12 +92,9 @@ void Ang_Eye::WheelOdometry(float dT) {
   velocity       = Clpfd * velocity_prev + Dlpfd * velocity_input;
   velocity_prev  = Alpfd * velocity_prev + Blpfd * velocity_input;
   
-//  xvalue = xvalue+(-1)*(odo-odo_prev)*sin(yawangle);
-//  yvalue = yvalue+(odo-odo_prev)*cos(yawangle);    
-
   relative_angle =  ((float)WheelAngRdeg - (float)WheelAngLdeg) * RAD_1_DEG * WHEEL_R / RoboTread; //ロボのYaw角[rad]
   relative_angle = relative_angle + correction_angle;
-//  abs_angle      = relative_angle + RAD_90_DEG + correction_angle;
+
   abs_angle      = relative_angle * 1.0 + RAD_90_DEG + correction_angle;
   xvalue = xvalue+(odo-odo_prev)*cos(abs_angle); //0902 tada
   yvalue = yvalue+(odo-odo_prev)*sin(abs_angle); //0902 tada
@@ -234,6 +233,18 @@ void Ang_Eye::det_Dansa( ) {
     }
   }
 }
+
+
+void Ang_Eye::setSonarDistance(void) {
+
+  if(sonar_counter%50 == 0){
+    sonarDistance = mSonar.getDistance();
+  }
+  sonar_counter++;
+  if(sonar_counter>10000) sonar_counter = 0;
+ 
+}
+
 
 
 #ifdef DEBUG_EYE_DEBUG
