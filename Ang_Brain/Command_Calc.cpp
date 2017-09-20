@@ -9,7 +9,7 @@ using ev3api::Clock;
 //#define STEP_DEBUG
 //#define GARAGE_DEBUG
 //#define BALANCE_DEBUG
-#define LUG_DEBUG
+//#define LUG_DEBUG
 //#define SONAR_DEBUG
 
 Clock*       gClock;

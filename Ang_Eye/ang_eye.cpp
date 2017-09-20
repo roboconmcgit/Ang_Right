@@ -3,7 +3,7 @@
 
 //#define DEBUG_ODOMETRY
 //#define DEBUG_EYE_DEBUG
-#define DEBUG_NANSYO
+//#define DEBUG_NANSYO
 
 // 定数宣言
 const int8_t Ang_Eye::INITIAL_WHITE_THRESHOLD = 40;  // 黒色の光センサ値
