@@ -7,6 +7,7 @@
 #include "ColorSensor.h"
 #include "Motor.h"
 #include "GyroSensor.h"
+#include "SonarSensor.h"
 
 // 定義
 class Ang_Eye {
@@ -14,13 +15,15 @@ public:
     explicit Ang_Eye(const ev3api::ColorSensor& colorSensor,
 		     ev3api::Motor& leftWheel,
 		     ev3api::Motor& rightWheel,
-		     ev3api::GyroSensor& gyro);
+		     ev3api::GyroSensor& gyro,
+		     ev3api::SonarSensor& sonar);
 
     void  init(); //17.0.28 k-ota add
     void  set_White_Black_Threshold(int8_t white, int8_t black, int8_t white_slant, int8_t black_slant);
     void  det_Line_Value();
     void  WheelOdometry(float dT);
     void  det_Dansa();
+    void  setSonarDistance(void);
 
     int   linevalue = 0;//ライン値
 
@@ -51,6 +54,9 @@ public:
     float RoboAngVt   = 0;
     bool  stop_sys    = 0;
 
+    int16_t sonarDistance = 0; // 距離 [cm]
+    bool    sonar_stop  = false;
+
 #ifdef EYE_DEBUG
     void  saveData( );
     void  export_dat( );
@@ -75,6 +81,7 @@ private:
     ev3api::Motor& mLeftWheel;
     ev3api::Motor& mRightWheel;
     ev3api::GyroSensor& mGyro;
+    ev3api::SonarSensor& mSonar;
 
     enum Ang_Eye_Mode{
       CALIB_ANGLE,
@@ -107,7 +114,7 @@ private:
     float dif_velocity_ave_dat = 0.0;
     float old_velocity_ave_dat = 0.0;
     float velocity_dat_500ms[125]; //data array during 500ms @ 4ms task term
-
+    int   sonar_counter = 0;
 };
 
 #endif  // ANAGO_EYE_H_

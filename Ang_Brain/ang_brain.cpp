@@ -36,40 +36,52 @@ void Ang_Brain::run() {
 			       mRobo_turn_left,
 			       mRobo_turn_right,
 			       mDansa,
+			       mSonar_dis,
 			       mRobo_balance_mode,
+			       mRobo_lug_mode,
 			       gStrategyDet->Max_Forward,
 			       gStrategyDet->Max_Yawrate,
 			       gStrategyDet->Min_Yawrate
 			       );      //6: ロボットの現在情報を取得
 
-	
-	if(Strategy == Goal){
+
+  if(Strategy == Goal){
     gCommandCalc->Track_run();
-	}
-	else{
-		  gCommandCalc->StrategyCalcRun(StrategyNum,VirtualGateNum,mXvalue,mYvalue,mYawangle);//7: 走行戦略を計算
-	}
-  
+  }
+  else{
+    gCommandCalc->StrategyCalcRun(StrategyNum,VirtualGateNum,mXvalue,mYvalue,mYawangle);//7: 走行戦略を計算
+    }
+
+#ifdef DEBUG
+    gCommandCalc->Track_run();
+#endif
+
+
+
   GetCalcResult(gCommandCalc->forward,
 		gCommandCalc->yawratecmd,
 		gCommandCalc->anglecommand,
-		gCommandCalc->tail_mode_lflag);   //8: 走行戦略の計算結果を取得
+		//		gCommandCalc->tail_mode_lflag);   //8: 走行戦略の計算結果を取得
+		gCommandCalc->tail_stand_mode,
+		gCommandCalc->tail_lug_mode);   //8: 走行戦略の計算結果を取得
+
 }
 
-void Ang_Brain::setEyeCommand(int linevalue,
-			      float xvalue,
-			      float yvalue,
-			      float odo,
-			      float speed,
-			      float yawrate,
-			      float abs_angle,
-			      int   robo_tail_angle,
-			      bool  robo_stop,
-			      bool  robo_forward,
-			      bool  robo_back,
-			      bool  robo_turn_left,
-			      bool  robo_turn_right,
-			      bool  dansa) {
+void Ang_Brain::setEyeCommand(int     linevalue,
+			      float   xvalue,
+			      float   yvalue,
+			      float   odo,
+			      float   speed,
+			      float   yawrate,
+			      float   abs_angle,
+			      int     robo_tail_angle,
+			      bool    robo_stop,
+			      bool    robo_forward,
+			      bool    robo_back,
+			      bool    robo_turn_left,
+			      bool    robo_turn_right,
+			      bool    dansa,
+			      int16_t sonar_dis){
   
   mLinevalue       = linevalue;
   mXvalue          = xvalue;
@@ -85,11 +97,14 @@ void Ang_Brain::setEyeCommand(int linevalue,
   mRobo_turn_left  = robo_turn_left;
   mRobo_turn_right = robo_turn_right;
   mDansa           = dansa;
+  mSonar_dis       = sonar_dis;
 }
 
 
-void Ang_Brain::setRoboCommand(bool robo_balance_mode){
+void Ang_Brain::setRoboCommand(bool robo_balance_mode, bool robo_lug_mode){
   mRobo_balance_mode = robo_balance_mode;
+  mRobo_lug_mode     = robo_lug_mode;
+
 }
 
 void Ang_Brain::SetSysMode(int mode) {
@@ -108,11 +123,15 @@ void Ang_Brain::GetStrategy(int strategy_num, int virtualgate_num){
 void Ang_Brain::GetCalcResult(int forward_calc,
 			      float yawratecmd_calc,
 			      float anglecommand_calc,
-			      bool tail_mode_lflag_calc){
+			      //			      bool tail_mode_lflag_calc){
+			      bool tail_stand_mode_calc,
+			      bool tail_lug_mode_calc){
   
   forward         = forward_calc;
   yawratecmd      = yawratecmd_calc;
   anglecommand    = anglecommand_calc;
-  tail_mode_lflag = tail_mode_lflag_calc;
+  //  tail_mode_lflag = tail_mode_lflag_calc;
+  tail_stand_mode = tail_stand_mode_calc;
+  tail_lug_mode   = tail_lug_mode_calc;
 }
 

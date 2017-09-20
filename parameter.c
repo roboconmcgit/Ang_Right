@@ -2,7 +2,8 @@
 int TAIL_ANGLE_STAND_UP = 98; /* 完全停止時の角度[度]     */
 int TAIL_ANGLE_RUN      =  3; /* バランス走行時の角度[度] */
 int TAIL_ANGLE_DANSA    = 85; /* 完全停止時の角度[度]     */
-int TAIL_ANGLE_LUG      = 75; /* 3点移動時の角度[度]      */
+int TAIL_ANGLE_LUG      = 65
+; /* 3点移動時の角度[度]      */
 int TAIL_ANGLE_GARAGE   = 94; /* 完全停止時の角度[度]     */
 
 float WheelDiameter = 79.95;  //背面から見て左タイヤの直径[mm] 0817 tada
@@ -38,7 +39,28 @@ float DEAD_ZONE_LENGTH      =  200.0; //0915 tada
 float FST_DANSA_POS         =  260;
 float SCD_DANSA_POS         =  260;
 
+//LUG
+float APPROACH_TO_LUG_LENGTH = 900;
+//float STOP_POS_FROM_LUG      = 5;
+float STOP_POS_FROM_LUG      = 10;
+
+float APPROACH_TO_1st_LUG    = 150;
+float APPROACH_TO_2nd_LUG    = 150;
+float APPROACH_TO_3rd_LUG    = 150;
+
+
+float LUG_1st_STOP           = 150;
+//float LUG_1st_STOP           = 200;
+float LUG_2nd_STOP           = 150;
+//float LUG_3rd_STOP           = 150;
+float LUG_3rd_STOP           = 200;
+
+//Parameter of Garage
 float STEP_TO_GARAGE_LENGTH = 1100;
+float LUG_TO_GARAGE_LENGTH  =  650;
+float GARAGE_X_POS          = 1100;
+float GARAGE_LENGTH         =  150;
+
 
 //Parameter of Area
 

@@ -44,47 +44,140 @@ Ang_Robo::Ang_Robo(const ev3api::GyroSensor& gyroSensor,
       mForward(LOW),
       mTurn(LOW),
 
-      //17.07.28 k-ota add for tail_control
-     angle2_e(0),   /* angle2用変数型宣言 */
-     angle2_eo1(0), /* angle2用変数型宣言 */
-     angle2_eo2(0), /* angle2用変数型宣言 */
-     pwm_o(0),      /* angle2用変数型宣言 */
-     pwm2(0),
-     pwm(0)
+     tail_motor_pwm(0)
  {
 }
 
+
+void Ang_Robo::init() {
+  offset = mGyroSensor.getAnglerVelocity();  // ジャイロセンサ値
+    
+  robo_Clock       = new Clock();        
+
+  mLeftWheel.reset();
+  mRightWheel.reset();
+  
+  mBalancer->init(offset);
+  balance_mode = true; 
+  lug_mode     = false;
+
+  gTail_pwm->init_pid(0, 0, 0, 1); //it would be chanbed bellow 
+  //  gTail_pwm->init_pid(1, 0.005, 0.001, dT_4ms);    
+
+  Anago_Mode = Ang_Balance;
+
+  Stand_Mode = Balance_Mode;
+}
+
 /**
- * バランス走行する
+ * PWM値を設定する
+ * @param forward 前進値
+ * @param turn    旋回値
  */
+void Ang_Robo::setCommand(int forward, float yawratecmd, signed int tail_ang_req, float yawrate, bool tail_stand_mode, bool tail_lug_mode) {
+  mForward         = forward;
+  mYawratecmd      = yawratecmd;
+  mTail_ang_req    = tail_ang_req;
+  mYawrate         = yawrate;
+  mTail_stand_mode = tail_stand_mode;
+  mTail_lug_mode   = tail_lug_mode;
+
+}
+/** not completed **/
+void Ang_Robo::run_anago_run() {
+  int16_t angle         = mGyroSensor.getAnglerVelocity();  // ジャイロセンサ値
+  int     rightWheelEnc = mRightWheel.getCount();            // 右モータ回転角度
+  int     leftWheelEnc  = mLeftWheel.getCount();             // 左モータ回転角度
+  int     battery       = ev3_battery_voltage_mV();
+
+  static float   ref_tail_angle;
+  static int32_t clock_start;
+
+  switch(Anago_Mode){
+
+  case Ang_Balance:
+
+    ref_tail_angle  =  TAIL_ANGLE_RUN;
+    balance_off_en  = false;
+    pre_balancer_on = false;
+    balance_mode    = true; 
+    ref_tail_angle =  TAIL_ANGLE_RUN;
+
+    mTurn = YawrateController(mYawrate, mYawratecmd);
+
+    /*
+    mBalancer->setCommand(mForward, mTurn);
+    mBalancer->update(angle, rightWheelEnc, leftWheelEnc, battery);
+
+    mLeftWheel.setPWM(mBalancer->getPwmLeft());
+    mRightWheel.setPWM(mBalancer->getPwmRight());
+
+    tail_control(ref_tail_angle);
+    */
+    break;
+
+  case Tail_Down:
+    mForward = 0;
+    mTurn    = 0;
+    
+    if(ref_tail_angle <= TAIL_ANGLE_DANSA){
+      ref_tail_angle = ref_tail_angle + 0.5;
+    }
+    if(mTail_Motor.getCount() >= TAIL_ANGLE_DANSA){
+      //      Stand_Mode = Tail_On;
+      clock_start = robo_Clock->now();
+    }
+    tail_control(ref_tail_angle);
+    balance_off_en = false;
+    break;
+
+  default:
+    mForward       = 0;
+    mTurn          = 0;
+    balance_off_en = false;
+    break;
+  }
+
+  if(balance_mode == true){
+    mBalancer->setCommand(mForward, mTurn);
+    mBalancer->update(angle, rightWheelEnc, leftWheelEnc, battery);
+
+    mLeftWheel.setPWM(mBalancer->getPwmLeft());
+    mRightWheel.setPWM(mBalancer->getPwmRight());
+
+    tail_control(ref_tail_angle);
+  }
+
+}
+
 void Ang_Robo::run() {
     int16_t angle         = mGyroSensor.getAnglerVelocity();  // ジャイロセンサ値
-    int     rightWheelEnc = mRightWheel.getCount();       // 右モータ回転角度
-    int     leftWheelEnc  = mLeftWheel.getCount();        // 左モータ回転角度
+    int     rightWheelEnc = mRightWheel.getCount();            // 右モータ回転角度
+    int     leftWheelEnc  = mLeftWheel.getCount();             // 左モータ回転角度
 
 	//アクティブヨーレート();
     mTurn = YawrateController(mYawrate, mYawratecmd);
 
-    if(mTailModeFlag == true){
+    if(mTail_stand_mode == true){
       tail_stand_from_balance();
-    }else if((mTailModeFlag == false) && (Stand_Mode != Balance_Mode)){
+    }else if((mTail_stand_mode == false) && (Stand_Mode != Balance_Mode)){
       if(Stand_Mode == Tail_Stand){
 	Stand_Mode = Stand_Vert;
       }
       tail_stand_from_balance();
 
     }else{
-      tail_control(mAngleCommand);
+      tail_control(mTail_ang_req);
       balance_off_en = false;
     }
 
     int battery = ev3_battery_voltage_mV();
     
-    if((Stand_Mode == Stand_to_Balance)&&(log_left_pwm < -20)){
+    if((Stand_Mode == Stand_to_Balance)&&(log_left_pwm < -10)){
       mBalancer->setCommand(mForward, mTurn);
       mBalancer->update(10, rightWheelEnc, leftWheelEnc, battery);
       
-    }else if((Stand_Mode == Stand_to_Balance)&&(log_left_pwm > 20)){
+    }else if((Stand_Mode == Stand_to_Balance)&&(log_left_pwm > 10)){
       mBalancer->setCommand(mForward, mTurn);
       mBalancer->update(-10, rightWheelEnc, leftWheelEnc, battery);
     }else{
@@ -101,12 +194,17 @@ void Ang_Robo::run() {
     log_left_pwm        = mBalancer->getPwmLeft();
     log_right_pwm       = mBalancer->getPwmRight();
 
-    if((balance_off_en == true) && (mTail_Motor.getCount() >  70)){
+    if( ((balance_off_en == true) && (mTail_Motor.getCount() >  70)) || (Stand_Mode == Lug_to_Stand) ){
       TailMode(mForward, mTurn);
       mLeftWheel.setPWM(mtail_mode_pwm_l);
       mRightWheel.setPWM(mtail_mode_pwm_r);
       balance_mode = false; 
-      
+      //    }else if((mTail_lug_mode == true) && (balance_off_en == true) && (balance_mode = false) ){
+    }else if(mTail_lug_mode == true){
+      TailMode(mForward, mTurn);
+      mLeftWheel.setPWM(mtail_mode_pwm_l);
+      mRightWheel.setPWM(mtail_mode_pwm_r);
+      balance_mode = false; 
     }else{
       mLeftWheel.setPWM(mBalancer->getPwmLeft());
       mRightWheel.setPWM(mBalancer->getPwmRight());
@@ -114,42 +212,6 @@ void Ang_Robo::run() {
     }
 }
 
-/**
- * バランス走行に必要なものをリセットする
- */
-void Ang_Robo::init() {
-  offset = mGyroSensor.getAnglerVelocity();  // ジャイロセンサ値
-    
-  robo_Clock       = new Clock();        
-  // モータエンコーダをリセットする
-  mLeftWheel.reset();
-  mRightWheel.reset();
-  
-  // 倒立振子制御初期化
-  mBalancer->init(offset);
-  balance_mode = true; 
-
-  gTail_pwm->init_pid(0.1, 0.01, 0.01, dT_4ms);
-    
-  Stand_Mode = Balance_Mode;
-}
-
-/**
- * PWM値を設定する
- * @param forward 前進値
- * @param turn    旋回値
- */
-void Ang_Robo::setCommand(int forward, float yawratecmd, signed int anglecommand, float yawrate, bool tail_mode_lflag) {
-    mForward      = forward;
-    mYawratecmd   = yawratecmd;
-    mAngleCommand = anglecommand;
-    mYawrate      = yawrate;
-    mTailModeFlag = tail_mode_lflag;//0816
-    mmForward     = mForward;
-    mmTurn        = mYawratecmd;
-    mmYawratecmd  = mAngleCommand;//目標Yawrate
-    mmYawrate     = mYawrate;
-}
 
 //2017.07.28 k-ota copy from 3-apex
 //*****************************************************************************
@@ -161,20 +223,20 @@ void Ang_Robo::setCommand(int forward, float yawratecmd, signed int anglecommand
 void Ang_Robo::tail_control(signed int angle)
 {
 
-  //  pwm = (float)(angle - mTail_Motor.getCount()*P_GAIN); /* 比例制御 */
-  pwm = gTail_pwm->calc_pid(angle, mTail_Motor.getCount());
-  pwm = pwm*0.1;
+  //  tail_motor_pwm = (float)(angle - mTail_Motor.getCount()*P_GAIN); /* 比例制御 */
+  tail_motor_pwm = gTail_pwm->calc_pid(angle, mTail_Motor.getCount());
+  tail_motor_pwm = tail_motor_pwm*0.1;
   /* PWM出力飽和処理 */
-  if (pwm > PWM_ABS_MAX)
+  if (tail_motor_pwm > PWM_ABS_MAX)
     {
-      pwm = PWM_ABS_MAX;
+      tail_motor_pwm = PWM_ABS_MAX;
     }
-  else if (pwm < -PWM_ABS_MAX)
+  else if (tail_motor_pwm < -PWM_ABS_MAX)
     {
-      pwm = -PWM_ABS_MAX;
+      tail_motor_pwm = -PWM_ABS_MAX;
     }
 
-  if (pwm == 0)
+  if (tail_motor_pwm == 0)
     {
       //17.07.28 kota modify//        ev3_motor_stop(tail_motor, true);
       mTail_Motor.stop();
@@ -182,11 +244,9 @@ void Ang_Robo::tail_control(signed int angle)
   else
     {
       //17.07.28 kota modify//        ev3_motor_set_power(tail_motor, (signed char)pwm);
-      mTail_Motor.setPWM((signed int)pwm);
+      mTail_Motor.setPWM((signed int)tail_motor_pwm);
     }
-  angle2_eo1 = 0.0;
-  angle2_eo2 = 0.0;
-  pwm_o = pwm; /* angle2用変数型初期化 */
+
 
 }
 
@@ -280,21 +340,73 @@ void Ang_Robo::tail_stand_from_balance(){
     break;
 
   case Tail_Stand:
+    //tail_control(TAIL_ANGLE_DANSA);
+    lug_mode     = false;
+
     if((robo_Clock->now() - clock_start) < 500){
       mForward = 0;
       mTurn = 0;
       balance_off_en = true;
     }else{
-      
-
       balance_off_en = true;
     }
+
+
+    if(mTail_lug_mode == true){
+      balance_off_en = true;
+      Stand_Mode = Tail_Lug;
+    }
+    break;
+
+  case Tail_Lug:
+    //    mForward = 0;
+    //    mTurn = 0;
+    balance_off_en = true;
+
+
+    if(mTail_Motor.getCount() <= TAIL_ANGLE_LUG){
+      clock_start = robo_Clock->now();
+      tail_control(TAIL_ANGLE_LUG);
+      mTail_Motor.setBrake(true);
+      lug_mode     = true;
+    }else{
+      target_tail_angle = target_tail_angle - 0.05;
+      tail_control(target_tail_angle);
+    }
+
+    if(mTail_lug_mode == false){
+      Stand_Mode = Lug_to_Stand;
+      mTail_Motor.setBrake(false);
+    }
+
+    break;
+
+  case Lug_to_Stand:
+    balance_off_en = true;
+    mTurn = 0;
+
+    if(mTail_Motor.getCount() < 75){
+      mForward = -100;
+      mTail_Motor.setPWM(100);
+    }else{
+      mForward = 0;
+      tail_control(TAIL_ANGLE_DANSA);
+      target_tail_angle = TAIL_ANGLE_DANSA;
+      if(mTail_Motor.getCount() >= TAIL_ANGLE_DANSA){
+	mTail_Motor.setBrake(true);
+	mTail_Motor.setPWM(0);
+	Stand_Mode = Tail_Stand;
+	clock_start = robo_Clock->now();
+      }
+    }
+
     break;
 
   case Stand_Vert:
     mForward = 0;
     mTurn    = 0; 
     balance_off_en = true;
+    mTail_Motor.setBrake(false);
     if(mTail_Motor.getCount() >= 95){
       tail_control(96);
       clock_start = robo_Clock->now();
@@ -317,36 +429,32 @@ void Ang_Robo::tail_stand_from_balance(){
     balance_off_en = true;
     tail_control(96);
 
-
-    if((log_left_pwm >= -20) && (log_left_pwm <= 20) && ((robo_Clock->now() - clock_start) > 1000)){
-      mForward       = 0;
-      mTurn          = 0; 
-      balance_off_en = false;
-      Stand_Mode     = Tail_for_Run;
-      tail_control(96);
+    if((robo_Clock->now() - clock_start) > 1000){
+      //    if((log_left_pwm >= -20) && (log_left_pwm <= 20) && ((robo_Clock->now() - clock_start) > 1000)){
+      if((log_left_pwm >= -10) && (log_left_pwm <= 10)){
+	mForward       = 0;
+	mTurn          = 0; 
+	//	balance_off_en = false;
+	balance_off_en = true;
+	Stand_Mode     = Tail_for_Run;
+	tail_control(96);
+      }
     }
     break;
 
   case Tail_for_Run:
     mForward = 0;
     mTurn    = 0; 
-    balance_off_en = false;
+    tail_control(98);
+    balance_off_en = true;
 
-    if(mTail_Motor.getCount() >=  98){
-      tail_control(98);
-      clock_start = robo_Clock->now();
-      Stand_Mode = Balance_Mode;
-    }
-
-    if(mTail_Motor.getCount() <= 98){
-      target_tail_angle = target_tail_angle + 1;
-      tail_control(target_tail_angle);
-    }else{
-      tail_control(98);
-      clock_start = robo_Clock->now();
-      Stand_Mode = Balance_Mode;
+    if(mTail_Motor.getCount() >=  97){
+      Stand_Mode     = Balance_Mode;
+      balance_off_en = false;
     }
     break;
+
+
 
   default:
     mForward = 0;
@@ -433,65 +541,3 @@ void Ang_Robo::TailMode(int mForward, float mTurn){
 	mtail_mode_pwm_r = 0.5*mForward - 1.0*mTurn;
 }
 
-void Ang_Robo::saveData(int idata_num){
-#ifdef DEBUG_ROBO
-
-	dsave_log1.push_front(0);
-	dsave_log2.push_front(0);
-	dsave_log3.push_front(0);
-	dsave_log4.push_front(0);
-	dsave_log5.push_front(0);
-	dsave_log6.push_front(0);
-	dsave_log7.push_front(0);
-	dsave_log8.push_front(0);
-	dsave_log9.push_front(0);
-	dsave_log10.push_front(0);
-
-    int current_size = (int)dsave_log1.size();
-
-    if(current_size > idata_num){
-    	dsave_log1.pop_front();
-    	dsave_log2.pop_front();
-    	dsave_log3.pop_front();
-    	dsave_log4.pop_front();
-    	dsave_log5.pop_front();
-    	dsave_log6.pop_front();
-    	dsave_log7.pop_front();
-    	dsave_log8.pop_front();
-    	dsave_log9.pop_front();
-    	dsave_log10.pop_front();
-    }
-#endif
-
-}
-
-void Ang_Robo::exportRobo(char *csv_header){
-
-#ifdef DEBUG_ROBO
-
-    FILE* file_id;
-    char csv_file_name[100];
-    char csv_file_name_tmp[] = "Robo_Data.csv";
-    sprintf(csv_file_name, "%s_%s", csv_header, csv_file_name_tmp);
-    file_id = fopen( csv_file_name ,"w");
-
-    fprintf(file_id, "log1, log2, log3, log4, log5, log6, log7, log8, log9, log10  \n");
-
-    int cnt_max = (int)dsave_log1.size()-1;
-    int cnt;
-    int cnt2;
-    //
-    for(cnt2 = 0; cnt2 <= cnt_max ; cnt2++){
-        cnt = cnt_max - cnt2;
-
-        //fprintf(file_id, "%f, %f, %f, %f, %f, %f, %f  \n", dsave_cpu_time[cnt], dsave_data_target[cnt], dsave_data_measured[cnt], dsave_diff_for_kp[cnt], dsave_diff_for_ki[cnt],dsave_diff_for_kd[cnt], dsave_res_pid[cnt]);
-        fprintf(file_id, "%f, %f, %f, %f, %f, %f, %f, %f, %f, %f  \n",
-        		dsave_log1[cnt], dsave_log2[cnt], dsave_log3[cnt], dsave_log4[cnt],
-				dsave_log5[cnt], dsave_log6[cnt], dsave_log7[cnt], dsave_log8[cnt], dsave_log9[cnt], dsave_log10[cnt]);
-    }
-
-
-    fclose(file_id);
-#endif
-
-}
