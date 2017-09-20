@@ -39,8 +39,10 @@ void CommandCalc::init( ){
 #endif
 
 #ifdef LUG_DEBUG
-  Track_Mode = Go_LUG;
-  mYaw_angle_offset = PAI;
+  //  Track_Mode = Go_LUG;
+  //  mYaw_angle_offset = PAI;
+  Track_Mode = Return_to_Line;
+
 #endif
 
 #ifdef SONAR_DEBUG
@@ -221,41 +223,30 @@ void CommandCalc::Track_run( ) {
     break;
 
   case Approach_to_Garage:
-
-    ref_odo = mOdo + STEP_TO_GARAGE_LENGTH;
-    y_t = -0.5*((FIVE_PAI) - mYawangle);
-    
+    tail_stand_mode = true;
+    ref_odo = mOdo + LUG_TO_GARAGE_LENGTH;
+    y_t = -0.5*(PAI - mYawangle);
     yawratecmd = y_t;
 
     gStep->SetInitPIDGain(0.1,0.005,0.05,dT_4ms);
     forward = 0.1*(gStep->CalcPIDContrInput(ref_odo, mOdo));
-    
-    anglecommand = TAIL_ANGLE_RUN;
     Track_Mode = Garage_In;
-
     break;
-    
+
+    //non used
   case Return_to_Line_Garage:
     forward =  50;
     LineTracerYawrate((4*mLinevalue));
     anglecommand = TAIL_ANGLE_RUN; //0817 tada
     tail_stand_mode = false;
-    /*
-    if((mOdo > 300)&&(mDet_gray)){
-      Track_Mode = Garage_In;
-      ref_odo = mOdo + GRAY_TO_GARAGE_LENGTH;
-      }*/
+
     break;
 
   case Garage_In:
-
-
-
-    y_t = -0.5*((FIVE_PAI+RAD_1_DEG) - mYawangle);
+    tail_stand_mode = true;
+    y_t = -0.5*(PAI - mYawangle);
     yawratecmd = y_t;
     forward = 0.3*(gStep->CalcPIDContrInput(ref_odo, mOdo));
-    anglecommand = TAIL_ANGLE_RUN;
-
 
     break;
 
@@ -780,33 +771,74 @@ void CommandCalc::StepRunner(int line_value, float odo, float angle, bool dansa)
 
 void CommandCalc::LookUpGateRunner(int line_value_lug, float odo, float angle,int line_value){
 
+  static float ref_forward;
+  static float ref_yaw;
   static float y_t;
   static float ref_odo;
   static int   stable_cnt;
+  static int   pre_sonar_dis;
+  static int   min_sonar_dis;
 
   switch(LUG_Mode){
 
   case LUG_Start:
-    forward = 30;
+    forward = 50;
     LineTracerYawrate((2*line_value));
-    LUG_Mode    = Approach_to_LUG;
-    ref_odo     = odo +  APPROACH_TO_LUG_LENGTH;
+    LUG_Mode      = Approach_to_LUG;
+    ref_forward   = 0.0;
+    ref_yaw       = 0.0;
+    ref_odo       = odo +  APPROACH_TO_LUG_LENGTH;
+    pre_sonar_dis = mSonar_dis;
+
+
     gForward->init_pid(0.05,0.01,0.001,dT_4ms);
 
 #ifdef LUG_DEBUG
-    ref_odo     = odo +  200;
+    //    ref_odo     = odo +  200;
 #endif
     break;
 
   case Approach_to_LUG:
-    forward = (mSonar_dis- STOP_POS_FROM_LUG);
-    if(forward < 0)  forward  = 0;
-    if(forward > 30) forward = 30;
+
+    /*botsu
+    ref_forward    = gForward->calc_pid(ref_odo, odo);
+    ref_forward    = ref_forward * 0.5;
+    forward        = (int)ref_forward;
     LineTracerYawrate((2*line_value));
+    */
+
+    ref_forward = (ref_odo - odo)/10.0+0.5;
+
+    if(ref_forward > 70){
+      ref_forward = 70;
+    }else if(ref_forward < 10){
+      ref_forward = 10;
+    }else{
+      ref_forward = ref_forward;
+    }
+    forward = (int)ref_forward;
+    LineTracerYawrate((2*line_value));
+
+
+    /* 0920
+    if((mSonar_dis - pre_sonar_dis)>20){
+      forward = (pre_sonar_dis- STOP_POS_FROM_LUG-1);
+      pre_sonar_dis = pre_sonar_dis;
+    }else{
+      forward = (mSonar_dis- STOP_POS_FROM_LUG);
+      pre_sonar_dis = mSonar_dis;
+    }
+    if(forward < 0)  forward  = 0;
+    if(forward > 50) forward = 50;
+    LineTracerYawrate((2*line_value));
+    */
+
+    /*
 #ifdef  LUG_DEBUG
     y_t             = -2.0*(PAI - angle);
     yawratecmd      = y_t;
 #endif
+    */
 
     if(mSonar_dis <= STOP_POS_FROM_LUG){
       forward     = 0;
@@ -814,6 +846,7 @@ void CommandCalc::LookUpGateRunner(int line_value_lug, float odo, float angle,in
       stable_cnt  = 0;
       LUG_Mode    = Tail_On_1st;
     }
+
     /*    forward    = gForward->calc_pid(ref_odo, odo);
     forward    = forward * 0.5;
     LineTracerYawrate((2*line_value));
@@ -840,7 +873,8 @@ void CommandCalc::LookUpGateRunner(int line_value_lug, float odo, float angle,in
     if(mRobo_balance_mode == false){
       forward    = 0;
       yawratecmd = 0;
-      LUG_Mode = POS_ADJ_1st;
+      ref_odo    = odo + APPROACH_TO_1st_LUG;
+      LUG_Mode   = POS_ADJ_1st;
     }
     break;
 
@@ -856,7 +890,7 @@ void CommandCalc::LookUpGateRunner(int line_value_lug, float odo, float angle,in
       forward         = 0;
       yawratecmd      = 0;
       tail_stand_mode = true;
-      tail_lug_mode  = false;
+      tail_lug_mode   = false;
       LUG_Mode        = LUG_Mode_1st;
     }
     break;
@@ -868,20 +902,29 @@ void CommandCalc::LookUpGateRunner(int line_value_lug, float odo, float angle,in
     tail_lug_mode  = true;
 
     if(mRobo_lug_mode == true){
-      ref_odo     = odo + LUG_1st_STOP;
-      LUG_Mode    = LUG_1st;
+      ref_odo       = odo + LUG_1st_STOP;
+      min_sonar_dis = 10;
+      LUG_Mode      = LUG_1st;
+
     }
     break;
 
   case LUG_1st:
 
-    forward = forward+0.0001;
+    forward = forward+0.0001; //modify later
     if(forward >= 10){
       forward = 10;
     }
-
     y_t = -2.0*(PAI - angle);
     yawratecmd = y_t;
+
+    if(mSonar_dis < min_sonar_dis){
+      min_sonar_dis = mSonar_dis;
+    }
+    if((min_sonar_dis < 7)&&(mSonar_dis > 100)){
+      ref_odo = odo + 50;
+      min_sonar_dis = 10;
+    }
 
     if(odo > ref_odo){
       LUG_Mode    = Pre_1st_Turn;
@@ -1035,7 +1078,7 @@ void CommandCalc::LookUpGateRunner(int line_value_lug, float odo, float angle,in
     tail_lug_mode = false;
 
     if(mRobo_lug_mode == false){
-      //      LUG_Mode    = Turn_2nd;
+      Track_Mode = Approach_to_Garage;
     }
     break;
 
