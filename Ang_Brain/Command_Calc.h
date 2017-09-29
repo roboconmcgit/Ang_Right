@@ -211,6 +211,7 @@ private:
     int   mMax_Forward;
     float mMax_Yawrate;
     float mMin_Yawrate;
+    float ref_forward;
 
     //	bool tail_mode_lflag_calc; // 倒立走行フラグ 0817
     

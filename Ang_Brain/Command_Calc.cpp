@@ -27,6 +27,7 @@ void CommandCalc::init( ){
   mYaw_angle_offset = 0.0;
   tail_stand_mode   = false;
   tail_lug_mode     = false;
+  ref_forward       = 0.0;
 
 #ifdef STEP_DEBUG
   //Track_Mode = Return_to_Line;
@@ -342,114 +343,127 @@ void CommandCalc::StrategyCalcRun(int strategy_num, int virtualgate_num, float x
 
   Strategy=static_cast<enumStrategy>(strategy_num);
 
-	switch(Strategy){
-	case StartDash:
-		StartDashRunner();
-	break;
+  switch(Strategy){
+  case StartDash:
+    StartDashRunner();
+    break;
+    
+  case LineTrace1:
+    
+    if(mOdo > 50){
+      if(mSpeed > 250){
+	ref_forward = ref_forward;
+      }else{
+	ref_forward = ref_forward + 0.133;
+      }
+    }else{
+      ref_forward = 0.0;
+    }
+	  
+    forward = (int)(ref_forward + 0.5 + 50);
 
-	case LineTrace1:
-	  forward = 100;
-	  LineTracerYawrate(mLinevalue);
-	  anglecommand = TAIL_ANGLE_RUN; //0817 tada
-	  tail_stand_mode = false;
+    //  forward = 100;
+    LineTracerYawrate(mLinevalue);
+    anglecommand = TAIL_ANGLE_RUN; //0817 tada
+    tail_stand_mode = false;
 		
-	break;
+    break;
 
+    
+  case MapTrace1:
+    forward = 100; //0827 tada
+    MapTracer(virtualgate_num, mXvalue, mYvalue, mYawangle); //0827 tada
+    anglecommand = TAIL_ANGLE_RUN; //0827 tada
+    tail_stand_mode = false; //0827 tada
+    break;
 
-	case MapTrace1:
-		forward = 100; //0827 tada
-		MapTracer(virtualgate_num, mXvalue, mYvalue, mYawangle); //0827 tada
-		anglecommand = TAIL_ANGLE_RUN; //0827 tada
-		tail_stand_mode = false; //0827 tada
-	break;
+  case MapTrace2:
+    forward = 100; //0827 tada
+    MapTracer(virtualgate_num, mXvalue, mYvalue, mYawangle); //0827 tada
+    anglecommand = TAIL_ANGLE_RUN; //0827 tada
+    tail_stand_mode = false; //0827 tada
+    break;
+    
+  case MapTrace3:
+    forward = 100; //0827 tada
+    MapTracer(virtualgate_num, mXvalue, mYvalue, mYawangle); //0827 tada
+    anglecommand = TAIL_ANGLE_RUN; //0827 tada
+    tail_stand_mode = false; //0827 tada
+    break;
+    
+  case MapTrace4:
+    forward = 100; //0827 tada
+    MapTracer(virtualgate_num, mXvalue, mYvalue, mYawangle); //0827 tada
+    anglecommand = TAIL_ANGLE_RUN; //0827 tada
+    tail_stand_mode = false; //0827 tada
+    break;
 
-	case MapTrace2:
-		forward = 100; //0827 tada
-		MapTracer(virtualgate_num, mXvalue, mYvalue, mYawangle); //0827 tada
-		anglecommand = TAIL_ANGLE_RUN; //0827 tada
-		tail_stand_mode = false; //0827 tada
-	break;
+  case MapTrace5:
+    forward = 100; //0827 tada
+    MapTracer(virtualgate_num, mXvalue, mYvalue, mYawangle); //0827 tada
+    anglecommand = TAIL_ANGLE_RUN; //0827 tada
+    tail_stand_mode = false; //0827 tada
+    break;
+    
+  case MapTrace6:
+    forward = 100; //0827 tada
+    MapTracer(virtualgate_num, mXvalue, mYvalue, mYawangle); //0827 tada
+    anglecommand = TAIL_ANGLE_RUN; //0827 tada
+    tail_stand_mode = false; //0827 tada
+    break;
 
-	case MapTrace3:
-		forward = 100; //0827 tada
-		MapTracer(virtualgate_num, mXvalue, mYvalue, mYawangle); //0827 tada
-		anglecommand = TAIL_ANGLE_RUN; //0827 tada
-		tail_stand_mode = false; //0827 tada
-	break;
+  case MapTrace7:
+    forward = 100; //0827 tada
+    MapTracer(virtualgate_num, mXvalue, mYvalue, mYawangle); //0827 tada
+    anglecommand = TAIL_ANGLE_RUN; //0827 tada
+    tail_stand_mode = false; //0827 tada
+    break;
+    
+  case MapTrace8:
+    forward = 100; //0827 tada
+    if(mLinevalue > 90) line_detect_flag = 1;
+    if(line_detect_flag == 1 && mLinevalue < 50) map2line_flag = 1;
+    if(map2line_flag == 1){
+      LineTracerYawrate(mLinevalue);
+    }
+    else{
+      MapTracer(virtualgate_num, mXvalue, mYvalue, mYawangle); //0827 tada
+    }
+    anglecommand = TAIL_ANGLE_RUN; //0827 tada
+    tail_stand_mode = false; //0827 tada
+    Track_Mode = Get_Ref_Odo;//0910 tada
+    break;
 
-	case MapTrace4:
-		forward = 100; //0827 tada
-		MapTracer(virtualgate_num, mXvalue, mYvalue, mYawangle); //0827 tada
-		anglecommand = TAIL_ANGLE_RUN; //0827 tada
-		tail_stand_mode = false; //0827 tada
-	break;
+  case Goal:
+    
+    break;
+    
+  case Goal2Step:
 
-	case MapTrace5:
-		forward = 100; //0827 tada
-		MapTracer(virtualgate_num, mXvalue, mYvalue, mYawangle); //0827 tada
-		anglecommand = TAIL_ANGLE_RUN; //0827 tada
-		tail_stand_mode = false; //0827 tada
-	break;
+    break;
 
-	case MapTrace6:
-		forward = 100; //0827 tada
-		MapTracer(virtualgate_num, mXvalue, mYvalue, mYawangle); //0827 tada
-		anglecommand = TAIL_ANGLE_RUN; //0827 tada
-		tail_stand_mode = false; //0827 tada
-	break;
+  case Step:
+    gForward->init_pid(0.1,0.005,0.05,dT_4ms);
+    StepRunner(mLinevalue, mOdo, mYawangle, mDansa);
+    break;
 
-	case MapTrace7:
-		forward = 100; //0827 tada
-		MapTracer(virtualgate_num, mXvalue, mYvalue, mYawangle); //0827 tada
-		anglecommand = TAIL_ANGLE_RUN; //0827 tada
-		tail_stand_mode = false; //0827 tada
-	break;
+  case LookUpGate:
+    
+    break;
 
-	case MapTrace8:
-		forward = 100; //0827 tada
-		if(mLinevalue > 90) line_detect_flag = 1;
-		if(line_detect_flag == 1 && mLinevalue < 50) map2line_flag = 1;
-		if(map2line_flag == 1){
-			LineTracerYawrate(mLinevalue);
-		}
-		else{
-			MapTracer(virtualgate_num, mXvalue, mYvalue, mYawangle); //0827 tada
-		}
-		anglecommand = TAIL_ANGLE_RUN; //0827 tada
-		tail_stand_mode = false; //0827 tada
-		Track_Mode = Get_Ref_Odo;//0910 tada
-	break;
-
-	case Goal:
-
-	break;
-
-	case Goal2Step:
-
-	break;
-
-	case Step:
-	  gForward->init_pid(0.1,0.005,0.05,dT_4ms);
-	  StepRunner(mLinevalue, mOdo, mYawangle, mDansa);
-	break;
-
-	case LookUpGate:
-
-	break;
-
-	case Garage:
-
-	break;
-
-	case Stop:
-
-	break;
-
-	default:
-
-	break;
-	}
-
+  case Garage:
+    
+    break;
+    
+  case Stop:
+    
+    break;
+    
+  default:
+    
+    break;
+  }
+  
 }
 
 void CommandCalc::StartDashRunner(){

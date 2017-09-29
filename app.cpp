@@ -616,11 +616,12 @@ void main_task(intptr_t unused) {
   mSys_Mode=START;
 
   //Start Dash sequence from here to robo_task.  
+  /*
   while(gTailMotor.getCount() <= 100){
     tslp_tsk(50);
     gAng_Robo->tail_control(TAIL_ANGLE_STAND_UP); //0819 changed by tada. original is 120
     TAIL_ANGLE_STAND_UP++;
-  }
+    }*/
   
   ev3_sta_cyc(ROBO_CYC);
   ter_tsk(BT_TASK);
