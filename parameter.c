@@ -10,6 +10,15 @@ float WheelDiameter = 79.95;  //背面から見て左タイヤの直径[mm] 0817
 float WHEEL_R       = 39.975; //Wheel radius
 int   RoboTread     = 160; //トレッド長さ[mm]
 
+/* fail rate 20%
+float START_ROBO_FORWARD_VAL = 100;
+float START_FORWARD_STEP     = 0.1;
+*/
+
+float START_ROBO_FORWARD_VAL = 50;
+float START_FORWARD_STEP     = 0.1;
+
+
 //Parameter of time length unit
 float dT_100ms = 0.1;
 float dT_4ms   = 0.004;

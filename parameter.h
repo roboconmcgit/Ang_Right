@@ -21,6 +21,9 @@ extern float WheelDiameter; //背面から見てタイヤの直径[mm]
 extern float WHEEL_R;       //radius of wheel[mm]
 extern int   RoboTread;      //トレッド長さ[mm]
 
+extern float START_ROBO_FORWARD_VAL;
+extern float START_FORWARD_STEP;
+
 //Parameter of time length unit
 extern float dT_100ms;
 extern float dT_4ms;
