@@ -32,9 +32,9 @@ extern float PAI;
 extern float FIVE_PAI;
 
 extern float RAD_315_DEG;
-extern float RAD_1_DEG; //deg@1rad 
+extern float RAD_1_DEG; //deg@1rad
 extern float RAD_5_DEG; //
-extern float RAD_15_DEG; //deg@1rad 
+extern float RAD_15_DEG; //deg@1rad
 extern float RAD_30_DEG; //
 
 extern float MINUS_RAD_5_DEG; //
@@ -64,6 +64,8 @@ extern float APPROACH_TO_3rd_LUG;
 extern float LUG_1st_STOP;
 extern float LUG_2nd_STOP;
 extern float LUG_3rd_STOP;
+
+extern float GAIN;
 
 //Parameter of Garage
 extern float STEP_TO_GARAGE_LENGTH;

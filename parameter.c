@@ -35,7 +35,7 @@ float dT_4ms   = 0.004;
 float PAI         =  3.1472;
 float FIVE_PAI    = 15.708;
 
-float RAD_1_DEG   = 0.0175; //deg@1rad 
+float RAD_1_DEG   = 0.0175; //deg@1rad
 float RAD_5_DEG   = 0.0873; //
 float RAD_15_DEG  = 0.2618; //
 float RAD_30_DEG  = 0.5236; //
@@ -72,6 +72,7 @@ float LUG_1st_STOP           = 150;
 float LUG_2nd_STOP           = 150;
 //float LUG_3rd_STOP           = 150;
 float LUG_3rd_STOP           = 200;
+float GAIN                   = 20.0;
 
 //Parameter of Garage
 float STEP_TO_GARAGE_LENGTH = 1100;

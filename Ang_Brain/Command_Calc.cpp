@@ -55,7 +55,7 @@ void CommandCalc::init( ){
 void CommandCalc::SetCurrentData(int     linevalue,
 				 float   xvalue,
 				 float   yvalue,
-				 float   odo,                     
+				 float   odo,
 				 float   speed,
 				 float   yawrate,
 				 float   abs_angle,
@@ -66,7 +66,7 @@ void CommandCalc::SetCurrentData(int     linevalue,
 				 bool    robo_turn_left,
 				 bool    robo_turn_right,
 				 bool    dansa,
-				 int16_t sonar_dis,			
+				 int16_t sonar_dis,
 				 bool    robo_balance_mode,
 				 bool    robo_lug_mode,
 				 int     max_forward,
@@ -128,7 +128,7 @@ void CommandCalc::Track_run( ) {
       Track_Mode = Final_Corner;
     }
     break;
-    
+
   case Final_Corner:
     forward =  mMax_Forward;
     LineTracerYawrate(mLinevalue);
@@ -148,7 +148,7 @@ void CommandCalc::Track_run( ) {
     LineTracerYawrate(mLinevalue);
     anglecommand = TAIL_ANGLE_RUN; //0817 tada
     tail_stand_mode = false;
-    
+
     if(mOdo > ref_odo){
       Track_Mode = Dead_Zone;
       ref_odo = mOdo + DEAD_ZONE_LENGTH;
@@ -167,7 +167,7 @@ void CommandCalc::Track_run( ) {
     LineTracerYawrate(dammy_line_value);
     ref_odo = mOdo + DEAD_ZONE_LENGTH;
     Track_Mode = Dead_Zone;
-    
+
     break;
 
   case Dead_Zone:
@@ -187,7 +187,7 @@ void CommandCalc::Track_run( ) {
     break;
 
   case Return_to_Line:
-    
+
     forward =  20;
     if(mYawangle < 0.16 && mLinevalue <20){
       dammy_line_value = 50 - 300*(mYawangle-0.1);
@@ -220,13 +220,13 @@ void CommandCalc::Track_run( ) {
 
     //non used
   case Go_Step:
-    
+
     break;
 
   case Approach_to_Garage:
     tail_stand_mode = true;
     ref_odo = mOdo + LUG_TO_GARAGE_LENGTH;
-    y_t = -0.5*(PAI - mYawangle);
+    y_t = -30.0*(PAI - mYawangle);
     yawratecmd = y_t;
 
     gStep->SetInitPIDGain(0.1,0.005,0.05,dT_4ms);
@@ -245,7 +245,7 @@ void CommandCalc::Track_run( ) {
 
   case Garage_In:
     tail_stand_mode = true;
-    y_t = -0.5*(PAI - mYawangle);
+    y_t = -30.0*(PAI - mYawangle);
     yawratecmd = y_t;
     forward = 0.3*(gStep->CalcPIDContrInput(ref_odo, mOdo));
 
@@ -347,11 +347,11 @@ void CommandCalc::StrategyCalcRun(int strategy_num, int virtualgate_num, float x
   case StartDash:
     StartDashRunner();
     break;
-    
+
   case LineTrace1:
 
 
-    
+
     if(mOdo > 50){
       if(mSpeed > 250){
 	ref_forward = ref_forward;
@@ -371,10 +371,10 @@ void CommandCalc::StrategyCalcRun(int strategy_num, int virtualgate_num, float x
     LineTracerYawrate(mLinevalue);
     anglecommand = TAIL_ANGLE_RUN; //0817 tada
     tail_stand_mode = false;
-		
+
     break;
 
-    
+
   case MapTrace1:
     forward = 100; //0827 tada
     MapTracer(virtualgate_num, mXvalue, mYvalue, mYawangle); //0827 tada
@@ -388,14 +388,14 @@ void CommandCalc::StrategyCalcRun(int strategy_num, int virtualgate_num, float x
     anglecommand = TAIL_ANGLE_RUN; //0827 tada
     tail_stand_mode = false; //0827 tada
     break;
-    
+
   case MapTrace3:
     forward = 100; //0827 tada
     MapTracer(virtualgate_num, mXvalue, mYvalue, mYawangle); //0827 tada
     anglecommand = TAIL_ANGLE_RUN; //0827 tada
     tail_stand_mode = false; //0827 tada
     break;
-    
+
   case MapTrace4:
     forward = 100; //0827 tada
     MapTracer(virtualgate_num, mXvalue, mYvalue, mYawangle); //0827 tada
@@ -409,27 +409,59 @@ void CommandCalc::StrategyCalcRun(int strategy_num, int virtualgate_num, float x
     anglecommand = TAIL_ANGLE_RUN; //0827 tada
     tail_stand_mode = false; //0827 tada
     break;
-    
+
   case MapTrace6:
     forward = 100; //0827 tada
+    if(mLinevalue > 90) line_detect_flag = 1;
+    if(line_detect_flag == 1 && mLinevalue < 50) map2line_flag = 1;
+    if(map2line_flag == 1){
+    	if(mLinevalue < 0) mLinevalue = 0;
+    	if(mLinevalue > 100) mLinevalue = 100;
+      LineTracerYawrate(mLinevalue);
+    	if(mYawangle < -0.4){
+    		line_detect_flag = 0;
+    		map2line_flag = 0;
+    	}
+    }
+    else{
     MapTracer(virtualgate_num, mXvalue, mYvalue, mYawangle); //0827 tada
+    }
     anglecommand = TAIL_ANGLE_RUN; //0827 tada
     tail_stand_mode = false; //0827 tada
     break;
 
   case MapTrace7:
     forward = 100; //0827 tada
+    if(mLinevalue > 90) line_detect_flag = 1;
+    if(line_detect_flag == 1 && mLinevalue < 50) map2line_flag = 1;
+    if(map2line_flag == 1){
+    	if(mLinevalue < 0) mLinevalue = 0;
+    	if(mLinevalue > 100) mLinevalue = 100;
+      LineTracerYawrate(mLinevalue);
+    	if(mYawangle < -0.4){
+    		line_detect_flag = 0;
+    		map2line_flag = 0;
+    	}
+    }
+    else{
     MapTracer(virtualgate_num, mXvalue, mYvalue, mYawangle); //0827 tada
+    }
     anglecommand = TAIL_ANGLE_RUN; //0827 tada
     tail_stand_mode = false; //0827 tada
     break;
-    
+
   case MapTrace8:
     forward = 100; //0827 tada
     if(mLinevalue > 90) line_detect_flag = 1;
     if(line_detect_flag == 1 && mLinevalue < 50) map2line_flag = 1;
     if(map2line_flag == 1){
+    	if(mLinevalue < 0) mLinevalue = 0;
+    	if(mLinevalue > 100) mLinevalue = 100;
       LineTracerYawrate(mLinevalue);
+    	if(mYawangle < -0.4){
+    		line_detect_flag = 0;
+    		map2line_flag = 0;
+    	}
     }
     else{
       MapTracer(virtualgate_num, mXvalue, mYvalue, mYawangle); //0827 tada
@@ -440,9 +472,9 @@ void CommandCalc::StrategyCalcRun(int strategy_num, int virtualgate_num, float x
     break;
 
   case Goal:
-    
+
     break;
-    
+
   case Goal2Step:
 
     break;
@@ -453,22 +485,22 @@ void CommandCalc::StrategyCalcRun(int strategy_num, int virtualgate_num, float x
     break;
 
   case LookUpGate:
-    
+
     break;
 
   case Garage:
-    
+
     break;
-    
+
   case Stop:
-    
+
     break;
-    
+
   default:
-    
+
     break;
   }
-  
+
 }
 
 void CommandCalc::StartDashRunner(){
@@ -561,10 +593,10 @@ void CommandCalc::MapTracer(int virtualgate_num, float mXvalue, float mYvalue, f
 	float Virtual_C3[3]={2657.34,1372.47+100,628.86};
 	float Virtual_S4[4]={2521.64,1986.52+100,4190.51,2342.51+200};
 
-	
+
 	float extend_gain = 1.0;
 	float Virtual_point_dist = 50.0;
-	
+
 	float x0,x1,x2,y0,y1,y2,a,a2,b,b2,r2,c,d,tt,f1,x10,y10,x12,y12;
 
 	VirtualGate=static_cast<enumVirtualGate>(virtualgate_num);
@@ -584,12 +616,12 @@ void CommandCalc::MapTracer(int virtualgate_num, float mXvalue, float mYvalue, f
 		y10 = y0-y1;
 		a = (x12*y10)-(y12*x10);
 		y_t = a/sqrt(pow(x12,2.0) + pow(y12,2.0));
-		
+
 	    if(y_t > 20.0) y_t = 20.0;
 	    if(y_t < -20.0) y_t = -20.0;
-		
+
 //		y_t = -1.0*y_t;
-		
+
     	yawratecmd = (y_t/4.0)*(pg + df*(y_t-y_t_prev));
 //    	yawratecmd = 0.0;
 	    y_t_prev = y_t;
@@ -597,7 +629,7 @@ void CommandCalc::MapTracer(int virtualgate_num, float mXvalue, float mYvalue, f
 	break;
 
 	case Gate23:
-		
+
 		x0 = mXvalue+Virtual_point_dist*cos(mYawangle);
 		y0 = mYvalue+Virtual_point_dist*sin(mYawangle);
 		x1 = Virtual_C1_a[0]*extend_gain;
@@ -616,7 +648,7 @@ void CommandCalc::MapTracer(int virtualgate_num, float mXvalue, float mYvalue, f
 	break;
 
 	case Gate34:
-	
+
 		x0 = mXvalue+Virtual_point_dist*cos(mYawangle);
 		y0 = mYvalue+Virtual_point_dist*sin(mYawangle);
 		x1 = Virtual_C1_b[0]*extend_gain;
@@ -629,9 +661,9 @@ void CommandCalc::MapTracer(int virtualgate_num, float mXvalue, float mYvalue, f
 		y_t = sqrt(r2) - Virtual_C1_b[2]*extend_gain;
 	    if(y_t > 20.0) y_t = 20.0;
 	    if(y_t < -20.0) y_t = -20.0;
-		
+
 //		y_t = -1.0*y_t;
-		
+
     	yawratecmd = (y_t/4.0)*(pg + df*(y_t-y_t_prev));
 //		yawratecmd = 0.0;
 	    y_t_prev = y_t;
@@ -650,12 +682,12 @@ void CommandCalc::MapTracer(int virtualgate_num, float mXvalue, float mYvalue, f
 		y10 = y0-y1;
 		a = (x12*y10)-(y12*x10);
 		y_t = a/sqrt(pow(x12,2.0) + pow(y12,2.0));
-		
+
 	    if(y_t > 20.0) y_t = 20.0;
 	    if(y_t < -20.0) y_t = -20.0;
-		
+
 //		y_t = -1.0*y_t;
-		
+
     	yawratecmd = (y_t/4.0)*(pg + df*(y_t-y_t_prev));
 //    	yawratecmd = 0.0;
 	    y_t_prev = y_t;
@@ -663,7 +695,7 @@ void CommandCalc::MapTracer(int virtualgate_num, float mXvalue, float mYvalue, f
 	break;
 
 	case Gate56:
-	
+
 		x0 = mXvalue+Virtual_point_dist*cos(mYawangle);
 		y0 = mYvalue+Virtual_point_dist*sin(mYawangle);
 		x1 = Virtual_C2[0]*extend_gain;
@@ -676,9 +708,9 @@ void CommandCalc::MapTracer(int virtualgate_num, float mXvalue, float mYvalue, f
 		y_t = sqrt(r2) - Virtual_C2[2]*extend_gain;
 	    if(y_t > 20.0) y_t = 20.0;
 	    if(y_t < -20.0) y_t = -20.0;
-		
+
 		y_t = -1.0*y_t;
-		
+
     	yawratecmd = (y_t/4.0)*(pg + df*(y_t-y_t_prev));
 //		yawratecmd = 0.0;
 	    y_t_prev = y_t;	break;
@@ -699,12 +731,12 @@ void CommandCalc::MapTracer(int virtualgate_num, float mXvalue, float mYvalue, f
 		y10 = y0-y1;
 		a = (x12*y10)-(y12*x10);
 		y_t = a/sqrt(pow(x12,2.0) + pow(y12,2.0));
-		
+
 	    if(y_t > 20.0) y_t = 20.0;
 	    if(y_t < -20.0) y_t = -20.0;
-		
+
 //		y_t = -1.0*y_t;
-		
+
     	yawratecmd = (y_t/4.0)*(pg + df*(y_t-y_t_prev));
 //    	yawratecmd = 0.0;
 	    y_t_prev = y_t;
@@ -712,7 +744,7 @@ void CommandCalc::MapTracer(int virtualgate_num, float mXvalue, float mYvalue, f
 	break;
 
 	case Gate78:
-	
+
 		x0 = mXvalue+Virtual_point_dist*cos(mYawangle);
 		y0 = mYvalue+Virtual_point_dist*sin(mYawangle);
 		x1 = Virtual_C3[0]*extend_gain;
@@ -725,9 +757,9 @@ void CommandCalc::MapTracer(int virtualgate_num, float mXvalue, float mYvalue, f
 		y_t = sqrt(r2) - Virtual_C3[2]*extend_gain;
 	    if(y_t > 20.0) y_t = 20.0;
 	    if(y_t < -20.0) y_t = -20.0;
-		
+
 //		y_t = -1.0*y_t;
-		
+
     	yawratecmd = (y_t/4.0)*(pg + df*(y_t-y_t_prev));
 //		yawratecmd = 0.0;
 	    y_t_prev = y_t;	break;
@@ -747,12 +779,12 @@ void CommandCalc::MapTracer(int virtualgate_num, float mXvalue, float mYvalue, f
 		y10 = y0-y1;
 		a = (x12*y10)-(y12*x10);
 		y_t = a/sqrt(pow(x12,2.0) + pow(y12,2.0));
-		
+
 	    if(y_t > 20.0) y_t = 20.0;
 	    if(y_t < -20.0) y_t = -20.0;
-		
+
 //		y_t = -1.0*y_t;
-		
+
     	yawratecmd = (y_t/4.0)*(pg + df*(y_t-y_t_prev));
 //    	yawratecmd = 0.0;
 	    y_t_prev = y_t;
@@ -848,10 +880,10 @@ void CommandCalc::LookUpGateRunner(int line_value_lug, float odo, float angle,in
     break;
 
   case POS_ADJ_1st:
-    
+
     if(odo < ref_odo){
-      forward         = 15;
-      y_t             = -2.0*(PAI - angle);
+      forward         = 30;
+      y_t             = -GAIN*(PAI - angle);
       yawratecmd      = y_t;
       tail_stand_mode = true;
       tail_lug_mode  = false;
@@ -884,10 +916,10 @@ void CommandCalc::LookUpGateRunner(int line_value_lug, float odo, float angle,in
     ref_forward = ref_forward+0.1; //modify later
     forward     = (int)(ref_forward + 0.5);
 
-    if(forward >= 10){
-      forward = 10;
+    if(forward >= 30){
+      forward = 30;
     }
-    y_t = -2.0*(PAI - angle);
+    y_t = -GAIN*(PAI - angle);
     yawratecmd = y_t;
 
     /*
@@ -904,7 +936,7 @@ void CommandCalc::LookUpGateRunner(int line_value_lug, float odo, float angle,in
       LUG_Mode    = Pre_1st_Turn;
     }
     break;
-    
+
   case Pre_1st_Turn:
     forward       = 0;
     yawratecmd    = 0;
@@ -913,9 +945,9 @@ void CommandCalc::LookUpGateRunner(int line_value_lug, float odo, float angle,in
     if(mRobo_lug_mode == false){
       LUG_Mode    = Turn_1st;
     }
-    
+
     break;
-    
+
   case Turn_1st:
       if(angle < 0){
           forward     = 0;
@@ -934,8 +966,8 @@ void CommandCalc::LookUpGateRunner(int line_value_lug, float odo, float angle,in
 
   case Approach_to_2nd_LUG:
     if(odo < ref_odo){
-      forward         = 15;
-      y_t             = -2.0*(0 - angle);
+      forward         = 30;
+      y_t             = -GAIN*(0 - angle);
       yawratecmd      = y_t;
       tail_stand_mode = true;
       tail_lug_mode   = false;
@@ -965,11 +997,11 @@ void CommandCalc::LookUpGateRunner(int line_value_lug, float odo, float angle,in
     ref_forward = ref_forward+0.1; //modify later
     forward     = (int)(ref_forward + 0.5);
 
-    if(forward >= 10){
-      forward = 10;
+    if(forward >= 30){
+      forward = 30;
     }
 
-    y_t = -2.0*(0 - angle);
+    y_t = -GAIN*(0 - angle);
     yawratecmd = y_t;
 
     if(odo > ref_odo){
@@ -985,7 +1017,7 @@ void CommandCalc::LookUpGateRunner(int line_value_lug, float odo, float angle,in
     if(mRobo_lug_mode == false){
       LUG_Mode    = Turn_2nd;
     }
-    
+
     break;
 
 
@@ -1008,8 +1040,8 @@ void CommandCalc::LookUpGateRunner(int line_value_lug, float odo, float angle,in
 
   case Approach_to_3rd_LUG:
     if(odo < ref_odo){
-      forward         = 15;
-      y_t             = -2.0*(PAI - angle);
+      forward         = 30;
+      y_t             = -GAIN*(PAI - angle);
       yawratecmd      = y_t;
       tail_stand_mode = true;
       tail_lug_mode   = false;
@@ -1038,10 +1070,10 @@ void CommandCalc::LookUpGateRunner(int line_value_lug, float odo, float angle,in
 
     ref_forward = ref_forward+0.1; //modify later
     forward     = (int)(ref_forward + 0.5);
-    if(forward >= 10){
-      forward = 10;
+    if(forward >= 30){
+      forward = 30;
     }
-    y_t = -2.0*(PAI - angle);
+    y_t = -GAIN*(PAI - angle);
     yawratecmd = y_t;
 
     if(odo > ref_odo){
