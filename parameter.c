@@ -15,8 +15,13 @@ float START_ROBO_FORWARD_VAL = 100;
 float START_FORWARD_STEP     = 0.1;
 */
 
+/* fail rate under 10%
 float START_ROBO_FORWARD_VAL = 50;
 float START_FORWARD_STEP     = 0.1;
+*/
+float START_ROBO_FORWARD_VAL = 25;
+float START_FORWARD_STEP     = 0.1;
+
 
 
 //Parameter of time length unit
