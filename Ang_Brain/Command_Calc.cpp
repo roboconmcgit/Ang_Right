@@ -349,10 +349,7 @@ void CommandCalc::StrategyCalcRun(int strategy_num, int virtualgate_num, float x
     break;
 
   case LineTrace1:
-
-
-
-    if(mOdo > 50){
+    if(mOdo > 20){
       if(mSpeed > 250){
 	ref_forward = ref_forward;
       }else{
