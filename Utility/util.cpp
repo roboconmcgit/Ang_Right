@@ -2,8 +2,8 @@
 #include "util.h"
 #include <math.h>
 
-#define EMG_TH_V 350
-#define EMG_TH_N 250
+#define EMG_TH_V 450
+#define EMG_TH_N 1000
 #define EMG_TH_C 100
 
 // 初期処理用

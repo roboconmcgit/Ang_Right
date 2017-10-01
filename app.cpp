@@ -95,7 +95,8 @@ static int   log_dat_03[10000];
 static int   log_dat_04[10000];
 static int   log_dat_05[10000];
 static int   log_dat_06[10000];
-//static int   log_dat_07[10000];
+static int   log_dat_07[10000];
+static int   log_dat_08[10000];
 
 /*
 static float log_fdat_00[15000];
@@ -137,14 +138,18 @@ static void sys_initialize() {
   ev3_speaker_set_volume(5);
   ev3_speaker_play_tone(NOTE_C4,200);
   
-  battery = ev3_battery_voltage_mV();
-  sprintf(battery_str, "Battery:%d", battery);
-
   ev3_lcd_fill_rect(0, 0, EV3_LCD_WIDTH, EV3_LCD_HEIGHT, EV3_LCD_WHITE);
   ev3_lcd_set_font(EV3_FONT_MEDIUM);
-  ev3_lcd_draw_string("Right vGATE",0, 20);
+  ev3_lcd_draw_string("Right vGATE",0, 0);
 
+  battery = ev3_battery_voltage_mV();
+  sprintf(battery_str, "V:%d", battery);
+  ev3_lcd_draw_string(battery_str,0, 20);
+
+  battery = ev3_battery_current_mA();
+  sprintf(battery_str, "A:%d", battery);
   ev3_lcd_draw_string(battery_str,0, 40);
+
   ev3_lcd_draw_string("Set ANG on GND",0, 60);
   ev3_lcd_draw_string("PUSH TS 4 RESET",0, 80);
 
@@ -225,15 +230,31 @@ static void log_dat( ){
   log_dat_06[log_cnt]  = (int)gAng_Eye->xvalue;
   log_dat_07[log_cnt]  = (int)gAng_Eye->yvalue;
   */
-  log_dat_00[log_cnt]  = gAng_Eye->sonarDistance;
-  log_dat_01[log_cnt]  = gAng_Eye->odo;
-  log_dat_02[log_cnt]  = gAng_Eye->linevalue;
-  log_dat_03[log_cnt]  = gAng_Robo-> log_forward;
+  /*
+  log_dat_00[log_cnt]  = ev3_battery_voltage_mV();
+  log_dat_01[log_cnt]  = ev3_battery_current_mA();
+  log_dat_02[log_cnt]  = gAng_Eye->dansa;
+  log_dat_03[log_cnt]  = gAng_Eye->odo;
 
-  log_dat_04[log_cnt]  = gAng_Eye->abs_angle;
-  log_dat_05[log_cnt]  = (int)gAng_Eye->xvalue;
-  log_dat_06[log_cnt]  = (int)gAng_Eye->yvalue;
+  log_dat_04[log_cnt]  = gAng_Eye->velocity;
+  log_dat_05[log_cnt]  = gAng_Robo-> log_forward;
+  log_dat_06[log_cnt]  = gAng_Eye->abs_angle;
+  log_dat_07[log_cnt]  = (int)gAng_Eye->xvalue;
 
+  log_dat_08[log_cnt]  = (int)gAng_Eye->yvalue;
+  */
+
+  log_dat_00[log_cnt]  = ev3_battery_voltage_mV();
+  log_dat_01[log_cnt]  = ev3_battery_current_mA();
+  log_dat_02[log_cnt]  = gTailMotor.getCount();;
+  log_dat_03[log_cnt]  = gAng_Robo->log_gyro;
+
+  log_dat_04[log_cnt]  = gAng_Robo-> log_left_wheel_enc;
+  log_dat_05[log_cnt]  = gAng_Robo-> log_left_pwm;
+  log_dat_06[log_cnt]  = gAng_Robo-> log_forward;
+  log_dat_07[log_cnt]  = gAng_Eye->velocity;
+
+  log_dat_08[log_cnt]  = gAng_Eye->odo;
 
 
   /*
@@ -248,15 +269,16 @@ static void log_dat( ){
   }
 }
 
+
 static void export_log_dat( ){
     FILE* file_id;
     int battery = ev3_battery_voltage_mV();
     file_id = fopen( "log_dat.csv" ,"w");
-    fprintf(file_id, "sonar,odo,line,forward,angle,x,y\n");
+    fprintf(file_id, "mV,mA,tail_cnt,gyro,left_wheel_enc,left_pwm,robo_forward,velocity,odo\n");
     int cnt;
 
     for(cnt = 0; cnt < log_size ; cnt++){
-      fprintf(file_id, "%d,%d,%d,%d,%d,%d,%d\n",log_dat_00[cnt],log_dat_01[cnt], log_dat_02[cnt],log_dat_03[cnt],log_dat_04[cnt],log_dat_05[cnt],log_dat_06[cnt]);
+      fprintf(file_id, "%d,%d,%d,%d,%d,%d,%d,%d,%d\n",log_dat_00[cnt],log_dat_01[cnt], log_dat_02[cnt],log_dat_03[cnt],log_dat_04[cnt],log_dat_05[cnt],log_dat_06[cnt],log_dat_07[cnt],log_dat_08[cnt]);
     }
     fclose(file_id);
 }
@@ -616,11 +638,12 @@ void main_task(intptr_t unused) {
   mSys_Mode=START;
 
   //Start Dash sequence from here to robo_task.  
+
   while(gTailMotor.getCount() <= 100){
     tslp_tsk(50);
     gAng_Robo->tail_control(TAIL_ANGLE_STAND_UP); //0819 changed by tada. original is 120
     TAIL_ANGLE_STAND_UP++;
-  }
+    }
   
   ev3_sta_cyc(ROBO_CYC);
   ter_tsk(BT_TASK);

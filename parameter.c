@@ -10,6 +10,24 @@ float WheelDiameter = 79.95;  //背面から見て左タイヤの直径[mm] 0817
 float WHEEL_R       = 39.975; //Wheel radius
 int   RoboTread     = 160; //トレッド長さ[mm]
 
+/* fail rate 20%
+float START_ROBO_FORWARD_VAL = 100;
+float START_FORWARD_STEP     = 0.1;
+*/
+
+/* fail rate under 10%
+float START_ROBO_FORWARD_VAL = 50;
+float START_FORWARD_STEP     = 0.1;
+*/
+/* too slow
+float START_ROBO_FORWARD_VAL = 25;
+float START_FORWARD_STEP     = 0.1;
+*/
+float START_ROBO_FORWARD_VAL = 40;
+float START_FORWARD_STEP     = 0.1;
+
+
+
 //Parameter of time length unit
 float dT_100ms = 0.1;
 float dT_4ms   = 0.004;
@@ -17,7 +35,7 @@ float dT_4ms   = 0.004;
 float PAI         =  3.1472;
 float FIVE_PAI    = 15.708;
 
-float RAD_1_DEG   = 0.0175; //deg@1rad 
+float RAD_1_DEG   = 0.0175; //deg@1rad
 float RAD_5_DEG   = 0.0873; //
 float RAD_15_DEG  = 0.2618; //
 float RAD_30_DEG  = 0.5236; //
@@ -54,6 +72,7 @@ float LUG_1st_STOP           = 150;
 float LUG_2nd_STOP           = 150;
 //float LUG_3rd_STOP           = 150;
 float LUG_3rd_STOP           = 200;
+float GAIN                   = 20.0;
 
 //Parameter of Garage
 float STEP_TO_GARAGE_LENGTH = 1100;
