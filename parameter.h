@@ -65,7 +65,10 @@ extern float LUG_1st_STOP;
 extern float LUG_2nd_STOP;
 extern float LUG_3rd_STOP;
 
-extern float GAIN;
+extern float LUG_YAW_GAIN;
+extern int   LUG_COL_VAL_OFFSET;
+extern int   LUG_COL_VAL_GAIN;
+extern float LUG_GRAY_TO_GARAGE;
 
 //Parameter of Garage
 extern float STEP_TO_GARAGE_LENGTH;

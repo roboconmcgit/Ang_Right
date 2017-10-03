@@ -244,7 +244,7 @@ static void log_dat( ){
   log_dat_08[log_cnt]  = (int)gAng_Eye->yvalue;
   */
 
-  log_dat_00[log_cnt]  = ev3_battery_voltage_mV();
+  log_dat_00[log_cnt]  = gAng_Eye->linevalue;
   log_dat_01[log_cnt]  = ev3_battery_current_mA();
   log_dat_02[log_cnt]  = gTailMotor.getCount();;
   log_dat_03[log_cnt]  = gAng_Robo->log_gyro;
@@ -665,6 +665,24 @@ void main_task(intptr_t unused) {
   ev3_lcd_draw_string("Saving Log Data",0, CALIB_FONT_HEIGHT*2);
   export_log_dat( );
   ev3_lcd_draw_string("Saving Log Data is done",0, CALIB_FONT_HEIGHT*3);
+
+  int   log_dis;
+  float f2i_log_dis_x1000;
+  char  log_dis_str[32];
+
+  log_dis = gAng_Eye->xvalue; 
+  sprintf(log_dis_str, "X:%d", log_dis);
+  ev3_lcd_draw_string(log_dis_str,0, 40);
+
+  log_dis = gAng_Eye->yvalue; 
+  sprintf(log_dis_str, "Y:%d", log_dis);
+  ev3_lcd_draw_string(log_dis_str,0, 60);
+
+  f2i_log_dis_x1000 = gAng_Eye->abs_angle*1000.0;
+  log_dis = f2i_log_dis_x1000;
+  sprintf(log_dis_str, "angle:%d", log_dis);
+  ev3_lcd_draw_string(log_dis_str,0, 80);
+
 #endif
 
 #ifdef EYE_DEBUG
