@@ -1,3 +1,6 @@
+#define OTA_ROBO
+//#define TOMY_ROBY
+
 //Parameter of Robo
 int TAIL_ANGLE_STAND_UP = 98; /* 完全停止時の角度[度]     */
 int TAIL_ANGLE_RUN      =  3; /* バランス走行時の角度[度] */
@@ -72,7 +75,14 @@ float LUG_1st_STOP           = 150;
 float LUG_2nd_STOP           = 150;
 //float LUG_3rd_STOP           = 150;
 float LUG_3rd_STOP           = 200;
+
+#ifdef OTA_ROBO
 float LUG_YAW_GAIN           = 2.0;
+#endif
+
+#ifdef TOMY_ROBO
+float LUG_YAW_GAIN           = 30.0;
+#endif
 
 int   LUG_COL_VAL_OFFSET     = 60;
 int   LUG_COL_VAL_GAIN       = 2;

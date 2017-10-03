@@ -6,6 +6,11 @@
 using ev3api::Clock;
 
 #define liting_radius 10; // liting spot radius [mm]
+
+#define OTA_ROBO
+//#define TADA_ROBO
+//#define TOMY_ROBO
+
 //#define STEP_DEBUG
 //#define GARAGE_DEBUG
 //#define BALANCE_DEBUG
@@ -582,6 +587,7 @@ void CommandCalc::MapTracer(int virtualgate_num, float mXvalue, float mYvalue, f
 	float Virtual_C3[3]={2657.34,1372.47+100,628.86};
 	float Virtual_S4[4]={2521.64,1986.52+100,4190.51,2342.51+200};
 */
+#ifdef TADA_ROBO
 	float Virtual_S1[4]={327.19,415.74,327.19, 2384.76};
 	float Virtual_C1_a[3]={1118.86,2384.76,791.68};
 	float Virtual_C1_b[3]={1118.86,2593.54,583.34};
@@ -590,6 +596,18 @@ void CommandCalc::MapTracer(int virtualgate_num, float mXvalue, float mYvalue, f
 	float Virtual_S3[4]={1725.13,1115.55,2142.17,1730.95+100};
 	float Virtual_C3[3]={2657.34,1372.47+100,628.86};
 	float Virtual_S4[4]={2521.64,1986.52+100,4190.51,2342.51+200};
+#endif
+
+#ifdef OTA_ROBO
+	float Virtual_S1[4]  = {  327.19,  415.74 ,     327.19, 2384.76     };
+	float Virtual_C1_a[3]= { 1118.86, 2384.76,      791.68              };
+	float Virtual_C1_b[3]= { 1118.86, 2593.54,      583.34              };
+	float Virtual_S2[4]  = { 1630.66, 2313.53,     1174.09, 1445.85     };
+	float Virtual_C2[3]  = { 1458.8,  1296.03,      321.72              };
+	float Virtual_S3[4]  = { 1725.13, 1115.55,     2142.17, 1730.95+100 };
+	float Virtual_C3[3]  = { 2657.34, 1372.47+100,  628.86              };
+	float Virtual_S4[4]  = { 2521.64, 1986.52+100, 4190.51, 2342.51+200 };
+#endif
 
 
 	float extend_gain = 1.0;
@@ -882,7 +900,15 @@ void CommandCalc::LookUpGateRunner(int line_value_lug, float odo, float angle,in
   case POS_ADJ_1st:
 
     if(odo < ref_odo){
+
+#ifdef OTA_ROBO
       forward         = 15;
+#endif
+
+#ifdef TOMY_ROBO
+      forward         = 30;
+#endif
+
       y_t             = -LUG_YAW_GAIN*(PAI - angle);
       yawratecmd      = y_t;
       tail_stand_mode = true;
@@ -916,9 +942,19 @@ void CommandCalc::LookUpGateRunner(int line_value_lug, float odo, float angle,in
     ref_forward = ref_forward+0.1; //modify later
     forward     = (int)(ref_forward + 0.5);
 
+#ifdef OTA_ROBO
     if(forward >= 10){
       forward = 10;
     }
+#endif
+
+#ifdef TOMY_ROBO
+    if(forward >= 30){
+      forward = 30;
+    }
+#endif
+
+
     y_t = -LUG_YAW_GAIN*(PAI - angle);
     yawratecmd = y_t;
 
@@ -966,7 +1002,15 @@ void CommandCalc::LookUpGateRunner(int line_value_lug, float odo, float angle,in
 
   case Approach_to_2nd_LUG:
     if(odo < ref_odo){
+
+#ifdef OTA_ROBO
       forward         = 15;
+#endif
+
+#ifdef TOMY_ROBO
+      forward         = 30;
+#endif
+
       y_t             = -LUG_YAW_GAIN*(0 - angle);
       yawratecmd      = y_t;
       tail_stand_mode = true;
@@ -997,9 +1041,18 @@ void CommandCalc::LookUpGateRunner(int line_value_lug, float odo, float angle,in
     ref_forward = ref_forward+0.1; //modify later
     forward     = (int)(ref_forward + 0.5);
 
+#ifdef OTA_ROBO
     if(forward >= 10){
       forward = 10;
     }
+#endif
+
+#ifdef TOMY_ROBO
+    if(forward >= 30){
+      forward = 30;
+    }
+#endif
+
 
     y_t = -LUG_YAW_GAIN*(0 - angle);
     yawratecmd = y_t;
@@ -1040,7 +1093,16 @@ void CommandCalc::LookUpGateRunner(int line_value_lug, float odo, float angle,in
 
   case Approach_to_3rd_LUG:
     if(odo < ref_odo){
+
+#ifdef OTA_ROBO
       forward         = 15;
+#endif
+
+
+#ifdef TOMY_ROBO
+      forward         = 30;
+#endif
+
       y_t             = -LUG_YAW_GAIN*(PAI - angle);
       yawratecmd      = y_t;
       tail_stand_mode = true;
@@ -1070,9 +1132,20 @@ void CommandCalc::LookUpGateRunner(int line_value_lug, float odo, float angle,in
 
     ref_forward = ref_forward+0.1; //modify later
     forward     = (int)(ref_forward + 0.5);
+
+
+#ifdef OTA_ROBO
     if(forward >= 10){
       forward = 10;
     }
+#endif
+
+#ifdef TOMY_ROBO
+    if(forward >= 30){
+      forward = 30;
+    }
+#endif
+
     y_t = -LUG_YAW_GAIN*(PAI - angle);
     yawratecmd = y_t;
 
@@ -1135,9 +1208,13 @@ void CommandCalc::LookUpGateRunner(int line_value_lug, float odo, float angle,in
     }
     forward = (int)ref_forward;
 
-
     y_t = -2.0*(PAI - angle);
     yawratecmd = y_t;
+    
+    if(ref_odo - odo < 10){
+    forward    = 0;
+    yawratecmd = 0;
+    }
 
     break;
 
