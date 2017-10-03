@@ -602,9 +602,16 @@ void CommandCalc::MapTracer(int virtualgate_num, float mXvalue, float mYvalue, f
 	float Virtual_S1[4]  = {  327.19,  415.74 ,     327.19, 2384.76     };
 	float Virtual_C1_a[3]= { 1118.86, 2384.76,      791.68              };
 	float Virtual_C1_b[3]= { 1118.86, 2593.54,      583.34              };
-	float Virtual_S2[4]  = { 1630.66, 2313.53,     1174.09, 1445.85     };
-	float Virtual_C2[3]  = { 1458.8,  1296.03,      321.72              };
-	float Virtual_S3[4]  = { 1725.13, 1115.55,     2142.17, 1730.95+100 };
+
+	//	float Virtual_S2[4]  = { 1630.66, 2313.53,     1174.09, 1445.85     };
+	float Virtual_S2[4]  = { 1630.66, 2313.53,     1074.09, 1445.85     };
+
+	//	float Virtual_C2[3]  = { 1458.8,  1296.03,      321.72              };
+	float Virtual_C2[3]  = { 1358.8,  1296.03,      321.72              };
+
+	//	float Virtual_S3[4]  = { 1725.13, 1115.55,     2142.17, 1730.95+100 };
+	float Virtual_S3[4]  = { 1625.13, 1115.55,     2142.17, 1730.95+100 };
+
 	float Virtual_C3[3]  = { 2657.34, 1372.47+100,  628.86              };
 	float Virtual_S4[4]  = { 2521.64, 1986.52+100, 4190.51, 2342.51+200 };
 #endif
@@ -1183,10 +1190,10 @@ void CommandCalc::LookUpGateRunner(int line_value_lug, float odo, float angle,in
     LineTracerYawrate(dammy_line_value);
 
     //det gray zone
-    if(angle <  RAD_120_DEG){
+    if(angle <  RAD_150_DEG){
       forward       = 0;
     } 
-    if(angle <  RAD_90_DEG){
+    if(angle <  RAD_120_DEG){
       forward     = 0;
       LUG_Mode    = GRAY_GARAGE;
       ref_odo     = odo + LUG_GRAY_TO_GARAGE;

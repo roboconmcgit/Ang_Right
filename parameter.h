@@ -43,6 +43,7 @@ extern float MINUS_RAD_30_DEG; //
 
 extern float RAD_90_DEG;
 extern float RAD_120_DEG;
+extern float RAD_150_DEG;
 extern float RAD_315_DEG;
 extern float RAD_345_DEG;
 extern float RAD_360_DEG;
