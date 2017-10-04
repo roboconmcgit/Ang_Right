@@ -68,13 +68,25 @@ float APPROACH_TO_LUG_LENGTH = 900;
 float STOP_POS_FROM_LUG      = 10;
 
 float APPROACH_TO_1st_LUG    = 150;
-float APPROACH_TO_2nd_LUG    = 150;
-float APPROACH_TO_3rd_LUG    = 150;
+
+//float APPROACH_TO_2nd_LUG    = 150;
+//float APPROACH_TO_2nd_LUG    = 170;
+float APPROACH_TO_2nd_LUG    = 160;
+
+//float APPROACH_TO_3rd_LUG    = 150;
+float APPROACH_TO_3rd_LUG    = 170;
 
 
-float LUG_1st_STOP           = 150;
 //float LUG_1st_STOP           = 200;
-float LUG_2nd_STOP           = 150;
+//float LUG_1st_STOP           = 150;
+//float LUG_1st_STOP           = 170;
+float LUG_1st_STOP           = 180;
+
+//float LUG_2nd_STOP           = 150;
+//float LUG_2nd_STOP           = 170;
+float LUG_2nd_STOP           = 180;
+
+
 //float LUG_3rd_STOP           = 150;
 float LUG_3rd_STOP           = 200;
 
@@ -89,7 +101,8 @@ float LUG_YAW_GAIN           = 30.0;
 int   LUG_COL_VAL_OFFSET     = 60;
 int   LUG_COL_VAL_GAIN       = 2;
 
-float LUG_GRAY_TO_GARAGE     = 400;
+//float LUG_GRAY_TO_GARAGE     = 410;
+float LUG_GRAY_TO_GARAGE     = 405;
 
 //Parameter of Garage
 float STEP_TO_GARAGE_LENGTH = 1100;
