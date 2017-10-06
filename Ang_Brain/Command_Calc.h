@@ -174,6 +174,9 @@ private:
 
       Tail_Stand_Up,
 
+      FIND_LEFT_EDGE,
+      GRAY_GARAGE,
+
       LUG_Debug_00
     };
 

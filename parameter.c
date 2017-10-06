@@ -1,3 +1,7 @@
+#define OTA_ROBO
+//define TADA_ROBO
+//#define TOMY_ROBY
+
 //Parameter of Robo
 int TAIL_ANGLE_STAND_UP = 98; /* 完全停止時の角度[度]     */
 int TAIL_ANGLE_RUN      =  3; /* バランス走行時の角度[度] */
@@ -46,6 +50,7 @@ float MINUS_RAD_30_DEG = -0.5236; //
 
 float RAD_90_DEG  = 1.5708; //
 float RAD_120_DEG = 2.0944; //
+float RAD_150_DEG = 2.6180; //
 float RAD_315_DEG = 5.4978; //
 float RAD_345_DEG = 6.0214; //
 float RAD_360_DEG = 6.2832; //
@@ -62,17 +67,47 @@ float APPROACH_TO_LUG_LENGTH = 900;
 //float STOP_POS_FROM_LUG      = 5;
 float STOP_POS_FROM_LUG      = 10;
 
-float APPROACH_TO_1st_LUG    = 150;
-float APPROACH_TO_2nd_LUG    = 150;
-float APPROACH_TO_3rd_LUG    = 150;
+//float APPROACH_TO_1st_LUG    = 150;
+//float APPROACH_TO_1st_LUG    = 170;
+float APPROACH_TO_1st_LUG    = 160; //fix
+
+//float APPROACH_TO_2nd_LUG    = 150;
+//float APPROACH_TO_2nd_LUG    = 170;
+//float APPROACH_TO_2nd_LUG    = 160;
+float APPROACH_TO_2nd_LUG    = 165;
+
+//float APPROACH_TO_3rd_LUG    = 150;
+//float APPROACH_TO_3rd_LUG    = 170;
+float APPROACH_TO_3rd_LUG    = 160;
 
 
-float LUG_1st_STOP           = 150;
 //float LUG_1st_STOP           = 200;
-float LUG_2nd_STOP           = 150;
+//float LUG_1st_STOP           = 150;
+//float LUG_1st_STOP           = 170;
+float LUG_1st_STOP           = 180;
+
+//float LUG_2nd_STOP           = 150;
+//float LUG_2nd_STOP           = 170;
+float LUG_2nd_STOP           = 180;
+
+
 //float LUG_3rd_STOP           = 150;
 float LUG_3rd_STOP           = 200;
-float GAIN                   = 20.0;
+
+#ifdef OTA_ROBO
+float LUG_YAW_GAIN           = 2.0;
+#endif
+
+#ifdef TOMY_ROBO
+float LUG_YAW_GAIN           = 30.0;
+#endif
+
+int   LUG_COL_VAL_OFFSET     = 60;
+int   LUG_COL_VAL_GAIN       = 2;
+
+//float LUG_GRAY_TO_GARAGE     = 410;
+//float LUG_GRAY_TO_GARAGE     = 405;
+float LUG_GRAY_TO_GARAGE     = 400;
 
 //Parameter of Garage
 float STEP_TO_GARAGE_LENGTH = 1100;
@@ -84,6 +119,8 @@ float GARAGE_LENGTH         =  150;
 //Parameter of Area
 
 float LineTrace1Area[4]={0.0, 1000.0, 0.0, 2000.0};
+
+#ifdef TADA_ROBO
 float MapTraceArea1[4]={0.0, 1000.0, 2000.0, 2382.16};
 float MapTraceArea2[4]={0.0, 1118.86, 2382.16, 3800.0};
 float MapTraceArea3[4]={1118.86, 2278.25, 2313.53, 3800.0};
@@ -92,6 +129,20 @@ float MapTraceArea5[4]={1000.0, 1725.13, 0.0, 1445.85};
 float MapTraceArea6[4]={1725.13, 2142.17, 0.0, 2313.53};
 float MapTraceArea7[4]={2142.17, 2521.64, 0.0, 2313.53};
 float MapTraceArea8[4]={2521.64, 4200.0, 0.0, 2500};
+#endif
+
+#ifdef OTA_ROBO
+//float MapTraceArea1[4]={    0.0,  1000.0,  2000.0,  2382.16 };
+float MapTraceArea1[4]={    0.0,  1000.0,  2000.0,  2384.76 };
+
+float MapTraceArea2[4]={    0.0,  1118.86, 2382.16, 3800.0  };
+float MapTraceArea3[4]={ 1118.86, 2278.25, 2313.53, 3800.0  };
+float MapTraceArea4[4]={ 1000.0,  1725.13, 1445.85, 2313.53 };
+float MapTraceArea5[4]={ 1000.0,  1625.13,    0.0,  1445.85 };
+float MapTraceArea6[4]={ 1625.13, 2142.17,    0.0,  2313.53 };
+float MapTraceArea7[4]={ 2142.17, 2521.64,    0.0,  2313.53 };
+float MapTraceArea8[4]={ 2521.64, 4200.0,     0.0,  2500    };
+#endif
 
 float StartArea[4]       = {-200.0,  200.0, -200.0,  500.0};
 float First_Straight[4]  = {-200.0,  200.0,  500.0, 2000.0};
@@ -106,6 +157,7 @@ float LookUpGateArea[4]={0.0, 0.0, 0.0, 0.0};
 float GarageArea[4]={0.0, 0.0, 0.0, 0.0};
 float StopArea[4]={0.0, 0.0, 0.0, 0.0};
 
+#ifdef TADA_ROBO
 float Gate12Area[4]={0.0, 1000.0, 2000.0, 2382.16};
 float Gate23Area[4]={0.0, 1118.86, 2382.16, 3800.0};
 float Gate34Area[4]={1118.86, 2278.25, 2313.53, 3800.0};
@@ -114,4 +166,19 @@ float Gate56Area[4]={1000.0, 1725.13, 0.0, 1445.85};
 float Gate67Area[4]={1725.13, 2142.17, 0.0, 2313.53};
 float Gate78Area[4]={2142.17, 2521.64, 0.0, 2313.53};
 float Gate89Area[4]={2521.64, 4200.0, 0.0, 2500};
+#endif
+
+#ifdef OTA_ROBO
+//float Gate12Area[4]={0.0, 1000.0, 2000.0, 2382.16};
+float Gate12Area[4]={    0.0,  1000.0,  2000.0,  2384.76 };
+float Gate23Area[4]={    0.0,  1118.86, 2382.16, 3800.0  };
+float Gate34Area[4]={ 1118.86, 2278.25, 2313.53, 3800.0  };
+float Gate45Area[4]={ 1000.0,  1725.13, 1445.85, 2313.53 };
+float Gate56Area[4]={ 1000.0,  1625.13,    0.0,  1445.85 };
+float Gate67Area[4]={ 1625.13, 2142.17,    0.0,  2313.53 };
+float Gate78Area[4]={ 2142.17, 2521.64,    0.0,  2313.53 };
+float Gate89Area[4]={ 2521.64, 4200.0,     0.0,  2500    };
+#endif
+
+
 //*/
