@@ -67,14 +67,18 @@ float APPROACH_TO_LUG_LENGTH = 900;
 //float STOP_POS_FROM_LUG      = 5;
 float STOP_POS_FROM_LUG      = 10;
 
-float APPROACH_TO_1st_LUG    = 150;
+//float APPROACH_TO_1st_LUG    = 150;
+//float APPROACH_TO_1st_LUG    = 170;
+float APPROACH_TO_1st_LUG    = 160; //fix
 
 //float APPROACH_TO_2nd_LUG    = 150;
 //float APPROACH_TO_2nd_LUG    = 170;
-float APPROACH_TO_2nd_LUG    = 160;
+//float APPROACH_TO_2nd_LUG    = 160;
+float APPROACH_TO_2nd_LUG    = 165;
 
 //float APPROACH_TO_3rd_LUG    = 150;
-float APPROACH_TO_3rd_LUG    = 170;
+//float APPROACH_TO_3rd_LUG    = 170;
+float APPROACH_TO_3rd_LUG    = 160;
 
 
 //float LUG_1st_STOP           = 200;
@@ -102,7 +106,8 @@ int   LUG_COL_VAL_OFFSET     = 60;
 int   LUG_COL_VAL_GAIN       = 2;
 
 //float LUG_GRAY_TO_GARAGE     = 410;
-float LUG_GRAY_TO_GARAGE     = 405;
+//float LUG_GRAY_TO_GARAGE     = 405;
+float LUG_GRAY_TO_GARAGE     = 400;
 
 //Parameter of Garage
 float STEP_TO_GARAGE_LENGTH = 1100;
@@ -127,14 +132,16 @@ float MapTraceArea8[4]={2521.64, 4200.0, 0.0, 2500};
 #endif
 
 #ifdef OTA_ROBO
-float MapTraceArea1[4]={0.0, 1000.0, 2000.0, 2382.16};
-float MapTraceArea2[4]={0.0, 1118.86, 2382.16, 3800.0};
-float MapTraceArea3[4]={1118.86, 2278.25, 2313.53, 3800.0};
-float MapTraceArea4[4]={1000.0, 1725.13, 1445.85, 2313.53};
-float MapTraceArea5[4]={1000.0, 1625.13, 0.0, 1445.85};
-float MapTraceArea6[4]={1625.13, 2142.17, 0.0, 2313.53};
-float MapTraceArea7[4]={2142.17, 2521.64, 0.0, 2313.53};
-float MapTraceArea8[4]={2521.64, 4200.0, 0.0, 2500};
+//float MapTraceArea1[4]={    0.0,  1000.0,  2000.0,  2382.16 };
+float MapTraceArea1[4]={    0.0,  1000.0,  2000.0,  2384.76 };
+
+float MapTraceArea2[4]={    0.0,  1118.86, 2382.16, 3800.0  };
+float MapTraceArea3[4]={ 1118.86, 2278.25, 2313.53, 3800.0  };
+float MapTraceArea4[4]={ 1000.0,  1725.13, 1445.85, 2313.53 };
+float MapTraceArea5[4]={ 1000.0,  1625.13,    0.0,  1445.85 };
+float MapTraceArea6[4]={ 1625.13, 2142.17,    0.0,  2313.53 };
+float MapTraceArea7[4]={ 2142.17, 2521.64,    0.0,  2313.53 };
+float MapTraceArea8[4]={ 2521.64, 4200.0,     0.0,  2500    };
 #endif
 
 float StartArea[4]       = {-200.0,  200.0, -200.0,  500.0};
@@ -162,14 +169,15 @@ float Gate89Area[4]={2521.64, 4200.0, 0.0, 2500};
 #endif
 
 #ifdef OTA_ROBO
-float Gate12Area[4]={0.0, 1000.0, 2000.0, 2382.16};
-float Gate23Area[4]={0.0, 1118.86, 2382.16, 3800.0};
-float Gate34Area[4]={1118.86, 2278.25, 2313.53, 3800.0};
-float Gate45Area[4]={1000.0, 1725.13, 1445.85, 2313.53};
-float Gate56Area[4]={1000.0, 1625.13, 0.0, 1445.85};
-float Gate67Area[4]={1625.13, 2142.17, 0.0, 2313.53};
-float Gate78Area[4]={2142.17, 2521.64, 0.0, 2313.53};
-float Gate89Area[4]={2521.64, 4200.0, 0.0, 2500};
+//float Gate12Area[4]={0.0, 1000.0, 2000.0, 2382.16};
+float Gate12Area[4]={    0.0,  1000.0,  2000.0,  2384.76 };
+float Gate23Area[4]={    0.0,  1118.86, 2382.16, 3800.0  };
+float Gate34Area[4]={ 1118.86, 2278.25, 2313.53, 3800.0  };
+float Gate45Area[4]={ 1000.0,  1725.13, 1445.85, 2313.53 };
+float Gate56Area[4]={ 1000.0,  1625.13,    0.0,  1445.85 };
+float Gate67Area[4]={ 1625.13, 2142.17,    0.0,  2313.53 };
+float Gate78Area[4]={ 2142.17, 2521.64,    0.0,  2313.53 };
+float Gate89Area[4]={ 2521.64, 4200.0,     0.0,  2500    };
 #endif
 
 

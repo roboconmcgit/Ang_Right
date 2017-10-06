@@ -438,16 +438,16 @@ void CommandCalc::StrategyCalcRun(int strategy_num, int virtualgate_num, float x
     if(mLinevalue > 90) line_detect_flag = 1;
     if(line_detect_flag == 1 && mLinevalue < 50) map2line_flag = 1;
     if(map2line_flag == 1){
-    	if(mLinevalue < 0) mLinevalue = 0;
-    	if(mLinevalue > 100) mLinevalue = 100;
+      if(mLinevalue < 0) mLinevalue = 0;
+      if(mLinevalue > 100) mLinevalue = 100;
       LineTracerYawrate(mLinevalue);
-    	if(mYawangle < -0.4){
-    		line_detect_flag = 0;
-    		map2line_flag = 0;
-    	}
+      if(mYawangle < -0.4){
+	line_detect_flag = 0;
+	map2line_flag = 0;
+      }
     }
     else{
-    MapTracer(virtualgate_num, mXvalue, mYvalue, mYawangle); //0827 tada
+      MapTracer(virtualgate_num, mXvalue, mYvalue, mYawangle); //0827 tada
     }
     anglecommand = TAIL_ANGLE_RUN; //0827 tada
     tail_stand_mode = false; //0827 tada
@@ -604,12 +604,12 @@ void CommandCalc::MapTracer(int virtualgate_num, float mXvalue, float mYvalue, f
 #endif
 
 #ifdef OTA_ROBO
-	float Virtual_S1[4]  = {  327.19,  415.74 ,     327.19, 2384.76     };
-	float Virtual_C1_a[3]= { 1118.86, 2384.76,      791.68              };
-	float Virtual_C1_b[3]= { 1118.86, 2593.54,      583.34              };
-	float Virtual_S2[4]  = { 1630.66, 2313.53,     1074.09, 1445.85     };
-	float Virtual_C2[3]  = { 1358.8,  1296.03,      321.72              };
-	float Virtual_S3[4]  = { 1625.13, 1115.55,     2142.17, 1730.95+90 };
+	float Virtual_S1[4]  = {  327.19,  415.74 ,    327.19, 2384.76     };
+	float Virtual_C1_a[3]= { 1118.86, 2384.76,     791.68              };
+	float Virtual_C1_b[3]= { 1118.86, 2593.54,     583.34              };
+	float Virtual_S2[4]  = { 1630.66, 2313.53,    1074.09, 1445.85     };
+	float Virtual_C2[3]  = { 1358.8,  1296.03,     321.72              };
+	float Virtual_S3[4]  = { 1625.13, 1115.55,    2142.17, 1730.95+90 };
 	float Virtual_C3[3]  = { 2657.34, 1372.47+90,  628.86              };
 	float Virtual_S4[4]  = { 2521.64, 1986.52+90, 4190.51, 2342.51+200 };
 
