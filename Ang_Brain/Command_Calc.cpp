@@ -919,6 +919,11 @@ void CommandCalc::LookUpGateRunner(int line_value_lug, float odo, float angle,in
       forward         = 15;
 #endif
 
+#ifdef TADA_ROBO
+      forward         = 15;
+#endif
+
+
 #ifdef TOMY_ROBO
       forward         = 30;
 #endif
@@ -961,6 +966,13 @@ void CommandCalc::LookUpGateRunner(int line_value_lug, float odo, float angle,in
       forward = 10;
     }
 #endif
+
+#ifdef TADA_ROBO
+    if(forward >= 10){
+      forward = 10;
+    }
+#endif
+
 
 #ifdef TOMY_ROBO
     if(forward >= 30){
@@ -1021,6 +1033,11 @@ void CommandCalc::LookUpGateRunner(int line_value_lug, float odo, float angle,in
       forward         = 15;
 #endif
 
+#ifdef TADA_ROBO
+      forward         = 15;
+#endif
+
+
 #ifdef TOMY_ROBO
       forward         = 30;
 #endif
@@ -1060,6 +1077,13 @@ void CommandCalc::LookUpGateRunner(int line_value_lug, float odo, float angle,in
       forward = 10;
     }
 #endif
+
+#ifdef TADA_ROBO
+    if(forward >= 10){
+      forward = 10;
+    }
+#endif
+
 
 #ifdef TOMY_ROBO
     if(forward >= 30){
@@ -1112,6 +1136,10 @@ void CommandCalc::LookUpGateRunner(int line_value_lug, float odo, float angle,in
       forward         = 15;
 #endif
 
+#ifdef TADA_ROBO
+      forward         = 15;
+#endif
+
 
 #ifdef TOMY_ROBO
       forward         = 30;
@@ -1153,6 +1181,13 @@ void CommandCalc::LookUpGateRunner(int line_value_lug, float odo, float angle,in
       forward = 10;
     }
 #endif
+
+#ifdef TADA_ROBO
+    if(forward >= 10){
+      forward = 10;
+    }
+#endif
+
 
 #ifdef TOMY_ROBO
     if(forward >= 30){
