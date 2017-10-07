@@ -219,7 +219,7 @@ void CommandCalc::Track_run( ) {
     break;
 
   case Go_LUG:
-    forward =  30;
+    forward =  40;
     LineTracerYawrate((2*mLinevalue));
     LookUpGateRunner(mLinevalue, mOdo, mYawangle,mLinevalue);
     break;
@@ -857,7 +857,7 @@ void CommandCalc::LookUpGateRunner(int line_value_lug, float odo, float angle,in
   switch(LUG_Mode){
 
   case LUG_Start:
-    forward = 50;
+    forward = 40;
     LineTracerYawrate((2*line_value));
     LUG_Mode      = Approach_to_LUG;
     ref_forward   = 0.0;
@@ -871,15 +871,22 @@ void CommandCalc::LookUpGateRunner(int line_value_lug, float odo, float angle,in
 
     ref_forward = (ref_odo - odo)/10.0+0.5;
 
-    if(ref_forward > 70){
-      ref_forward = 70;
+    if(ref_forward > 50){
+      ref_forward = 50;
     }else if(ref_forward < 10){
       ref_forward = 10;
     }else{
       ref_forward = ref_forward;
     }
     forward = (int)ref_forward;
-    LineTracerYawrate((2*line_value));
+
+
+    LineTracerYawrate((2*line_value));    
+
+    //keep angle under 180deg 
+    if((angle > (PAI + RAD_5_DEG)&&(yawratecmd < 0))){
+      LineTracerYawrate(50);
+    }
 
     if(mSonar_dis <= STOP_POS_FROM_LUG){
       forward     = 0;
