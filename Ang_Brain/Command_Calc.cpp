@@ -219,7 +219,7 @@ void CommandCalc::Track_run( ) {
     break;
 
   case Go_LUG:
-    forward =  30;
+    forward =  40;
     LineTracerYawrate((2*mLinevalue));
     LookUpGateRunner(mLinevalue, mOdo, mYawangle,mLinevalue);
     break;
@@ -415,6 +415,8 @@ void CommandCalc::StrategyCalcRun(int strategy_num, int virtualgate_num, float x
 
   case MapTrace6:
     forward = 100; //0827 tada
+
+    /*
     if(mLinevalue > 90) line_detect_flag = 1;
     if(line_detect_flag == 1 && mLinevalue < 50) map2line_flag = 1;
     if(map2line_flag == 1){
@@ -429,6 +431,10 @@ void CommandCalc::StrategyCalcRun(int strategy_num, int virtualgate_num, float x
     else{
     MapTracer(virtualgate_num, mXvalue, mYvalue, mYawangle); //0827 tada
     }
+    */
+
+    MapTracer(virtualgate_num, mXvalue, mYvalue, mYawangle); //0827 tada
+
     anglecommand = TAIL_ANGLE_RUN; //0827 tada
     tail_stand_mode = false; //0827 tada
     break;
@@ -857,7 +863,7 @@ void CommandCalc::LookUpGateRunner(int line_value_lug, float odo, float angle,in
   switch(LUG_Mode){
 
   case LUG_Start:
-    forward = 50;
+    forward = 40;
     LineTracerYawrate((2*line_value));
     LUG_Mode      = Approach_to_LUG;
     ref_forward   = 0.0;
@@ -871,15 +877,22 @@ void CommandCalc::LookUpGateRunner(int line_value_lug, float odo, float angle,in
 
     ref_forward = (ref_odo - odo)/10.0+0.5;
 
-    if(ref_forward > 70){
-      ref_forward = 70;
+    if(ref_forward > 50){
+      ref_forward = 50;
     }else if(ref_forward < 10){
       ref_forward = 10;
     }else{
       ref_forward = ref_forward;
     }
     forward = (int)ref_forward;
-    LineTracerYawrate((2*line_value));
+
+
+    LineTracerYawrate((2*line_value));    
+
+    //keep angle under 180deg 
+    if((angle > (PAI + RAD_5_DEG)&&(yawratecmd < 0))){
+      LineTracerYawrate(50);
+    }
 
     if(mSonar_dis <= STOP_POS_FROM_LUG){
       forward     = 0;
@@ -911,6 +924,11 @@ void CommandCalc::LookUpGateRunner(int line_value_lug, float odo, float angle,in
 #ifdef OTA_ROBO
       forward         = 15;
 #endif
+
+#ifdef TADA_ROBO
+      forward         = 15;
+#endif
+
 
 #ifdef TOMY_ROBO
       forward         = 30;
@@ -954,6 +972,13 @@ void CommandCalc::LookUpGateRunner(int line_value_lug, float odo, float angle,in
       forward = 10;
     }
 #endif
+
+#ifdef TADA_ROBO
+    if(forward >= 10){
+      forward = 10;
+    }
+#endif
+
 
 #ifdef TOMY_ROBO
     if(forward >= 30){
@@ -1014,6 +1039,11 @@ void CommandCalc::LookUpGateRunner(int line_value_lug, float odo, float angle,in
       forward         = 15;
 #endif
 
+#ifdef TADA_ROBO
+      forward         = 15;
+#endif
+
+
 #ifdef TOMY_ROBO
       forward         = 30;
 #endif
@@ -1053,6 +1083,13 @@ void CommandCalc::LookUpGateRunner(int line_value_lug, float odo, float angle,in
       forward = 10;
     }
 #endif
+
+#ifdef TADA_ROBO
+    if(forward >= 10){
+      forward = 10;
+    }
+#endif
+
 
 #ifdef TOMY_ROBO
     if(forward >= 30){
@@ -1105,12 +1142,16 @@ void CommandCalc::LookUpGateRunner(int line_value_lug, float odo, float angle,in
       forward         = 15;
 #endif
 
+#ifdef TADA_ROBO
+      forward         = 15;
+#endif
+
 
 #ifdef TOMY_ROBO
       forward         = 30;
 #endif
 
-      y_t             = -LUG_YAW_GAIN*(PAI - angle);
+      y_t             = -LUG_YAW_GAIN*(PAI + RAD_1_DEG + RAD_1_DEG - angle);
       yawratecmd      = y_t;
       tail_stand_mode = true;
       tail_lug_mode   = false;
@@ -1147,13 +1188,20 @@ void CommandCalc::LookUpGateRunner(int line_value_lug, float odo, float angle,in
     }
 #endif
 
+#ifdef TADA_ROBO
+    if(forward >= 10){
+      forward = 10;
+    }
+#endif
+
+
 #ifdef TOMY_ROBO
     if(forward >= 30){
       forward = 30;
     }
 #endif
 
-    y_t = -LUG_YAW_GAIN*(PAI - angle);
+    y_t = -LUG_YAW_GAIN*(PAI + RAD_1_DEG + RAD_1_DEG - angle);
     yawratecmd = y_t;
 
     if(odo > ref_odo){
@@ -1222,7 +1270,7 @@ void CommandCalc::LookUpGateRunner(int line_value_lug, float odo, float angle,in
       forward = 10;
     }
 
-    y_t = -2.0*(PAI - angle);
+    y_t = -2.0*(PAI + RAD_1_DEG - angle);
     yawratecmd = y_t;
     
     if(ref_odo - odo < 10){

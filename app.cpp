@@ -208,6 +208,8 @@ static void sys_destroy(){
 
 #ifdef LOG_RECORD
 static void log_dat( ){
+  float float_to_int_x1000;
+
   /*
   log_dat_00[log_cnt]  = gAng_Brain->tail_mode_lflag;
   log_dat_01[log_cnt]  = gAng_Robo-> log_forward;
@@ -256,15 +258,22 @@ static void log_dat( ){
 
   log_dat_08[log_cnt]  = gAng_Eye->odo;
   */
+
+  float_to_int_x1000   =  gAng_Eye->abs_angle*1000.0;
+
   log_dat_00[log_cnt]  = gAng_Eye->linevalue;
   log_dat_01[log_cnt]  = gAng_Eye->odo;
   log_dat_02[log_cnt]  = (int)gAng_Eye->xvalue;
   log_dat_03[log_cnt]  = (int)gAng_Eye->yvalue;
 
-  log_dat_04[log_cnt]  = gAng_Robo->log_gyro;
+  float_to_int_x1000   =  gAng_Eye->abs_angle*1000.0;
+  log_dat_04[log_cnt]  =  (int)float_to_int_x1000;
+
   log_dat_05[log_cnt]  = gAng_Robo->log_forward;
   log_dat_06[log_cnt]  = gAng_Eye->velocity;
-  log_dat_07[log_cnt]  = gAng_Brain->yawratecmd;
+
+  float_to_int_x1000   = gAng_Brain->yawratecmd * 1000.0;
+  log_dat_07[log_cnt]  =  (int)float_to_int_x1000;
 
   log_dat_08[log_cnt]  = gAng_Eye->dansa; 
   /*
@@ -284,7 +293,7 @@ static void export_log_dat( ){
     FILE* file_id;
     int battery = ev3_battery_voltage_mV();
     file_id = fopen( "log_dat.csv" ,"w");
-    fprintf(file_id, "line,odo,x,y,gyro,forward,velo,yawcmd,dansa\n");
+    fprintf(file_id, "line,odo,x,y,angle,forward,velo,yawcmd,dansa\n");
     int cnt;
 
     for(cnt = 0; cnt < log_size ; cnt++){
