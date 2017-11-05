@@ -415,6 +415,8 @@ void CommandCalc::StrategyCalcRun(int strategy_num, int virtualgate_num, float x
 
   case MapTrace6:
     forward = 100; //0827 tada
+
+    /*
     if(mLinevalue > 90) line_detect_flag = 1;
     if(line_detect_flag == 1 && mLinevalue < 50) map2line_flag = 1;
     if(map2line_flag == 1){
@@ -429,6 +431,10 @@ void CommandCalc::StrategyCalcRun(int strategy_num, int virtualgate_num, float x
     else{
     MapTracer(virtualgate_num, mXvalue, mYvalue, mYawangle); //0827 tada
     }
+    */
+
+    MapTracer(virtualgate_num, mXvalue, mYvalue, mYawangle); //0827 tada
+
     anglecommand = TAIL_ANGLE_RUN; //0827 tada
     tail_stand_mode = false; //0827 tada
     break;

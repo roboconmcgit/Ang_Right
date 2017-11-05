@@ -59,6 +59,8 @@ float RAD_450_DEG = 7.8540;
 //Parameter of Course
 float FINAL_STRAIGHT_LENGTH = 1100.0;
 float DEAD_ZONE_LENGTH      =  200.0; //0915 tada
+
+
 float FST_DANSA_POS         =  260;
 float SCD_DANSA_POS         =  260;
 

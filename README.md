@@ -1,2 +1,0 @@
-# Ang_Right
-test
