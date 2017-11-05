@@ -2,7 +2,7 @@
 #include "math.h"
 
 //#define DEBUG_ODOMETRY
-//#define DEBUG_EYE_DEBUG
+#define DEBUG_EYE_DEBUG
 //#define DEBUG_NANSYO
 
 // 定数宣言
@@ -260,8 +260,8 @@ void Ang_Eye::saveData( ){
 
   log_cnt++;
   if (log_cnt == log_size){
-    log_cnt  = log_cnt;
-    stop_sys = 1;
+    log_cnt  = 0;
+//    stop_sys = 1;
   }
 }
 

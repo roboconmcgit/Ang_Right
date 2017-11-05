@@ -515,7 +515,8 @@ float Ang_Robo::C_controller(float E_out, float yawrate, float S_out)
 //	C_in = (E_out - yawrate);
 	C_out = C_ud1;
 	C_ud1 = C_in * C_gain + (C_out * 1.0);
-
+	if(C_ud1 > 100) C_ud1 = 100;
+	if(C_ud1 < -100) C_ud1 = -100;
 
 	return C_out;
 }

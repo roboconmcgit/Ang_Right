@@ -1,13 +1,22 @@
 #define OTA_ROBO
-//define TADA_ROBO
+//#define TADA_ROBO
 //#define TOMY_ROBY
 
 //Parameter of Robo
 int TAIL_ANGLE_STAND_UP = 98; /* 完全停止時の角度[度]     */
 int TAIL_ANGLE_RUN      =  3; /* バランス走行時の角度[度] */
+#ifdef OTA_ROBO
 int TAIL_ANGLE_DANSA    = 85; /* 完全停止時の角度[度]     */
-int TAIL_ANGLE_LUG      = 65
-; /* 3点移動時の角度[度]      */
+int TAIL_ANGLE_LUG      = 65; /* 3点移動時の角度[度]      */
+#endif
+#ifdef TOMY_ROBO
+int TAIL_ANGLE_DANSA    = 85; /* 完全停止時の角度[度]     */
+int TAIL_ANGLE_LUG      = 65; /* 3点移動時の角度[度]      */
+#endif
+#ifdef TADA_ROBO
+int TAIL_ANGLE_DANSA    = 89; /* 完全停止時の角度[度]     */
+int TAIL_ANGLE_LUG      = 67; /* 3点移動時の角度[度]      */
+#endif
 int TAIL_ANGLE_GARAGE   = 94; /* 完全停止時の角度[度]     */
 
 float WheelDiameter = 79.95;  //背面から見て左タイヤの直径[mm] 0817 tada
@@ -104,6 +113,10 @@ float LUG_YAW_GAIN           = 2.0;
 float LUG_YAW_GAIN           = 30.0;
 #endif
 
+#ifdef TADA_ROBO
+float LUG_YAW_GAIN           = 2.0;
+#endif
+
 int   LUG_COL_VAL_OFFSET     = 60;
 int   LUG_COL_VAL_GAIN       = 2;
 
@@ -134,6 +147,19 @@ float MapTraceArea8[4]={2521.64, 4200.0, 0.0, 2500};
 #endif
 
 #ifdef OTA_ROBO
+//float MapTraceArea1[4]={    0.0,  1000.0,  2000.0,  2382.16 };
+float MapTraceArea1[4]={    0.0,  1000.0,  2000.0,  2384.76 };
+
+float MapTraceArea2[4]={    0.0,  1118.86, 2382.16, 3800.0  };
+float MapTraceArea3[4]={ 1118.86, 2278.25, 2313.53, 3800.0  };
+float MapTraceArea4[4]={ 1000.0,  1725.13, 1445.85, 2313.53 };
+float MapTraceArea5[4]={ 1000.0,  1625.13,    0.0,  1445.85 };
+float MapTraceArea6[4]={ 1625.13, 2142.17,    0.0,  2313.53 };
+float MapTraceArea7[4]={ 2142.17, 2521.64,    0.0,  2313.53 };
+float MapTraceArea8[4]={ 2521.64, 4200.0,     0.0,  2500    };
+#endif
+
+#ifdef TOMY_ROBO
 //float MapTraceArea1[4]={    0.0,  1000.0,  2000.0,  2382.16 };
 float MapTraceArea1[4]={    0.0,  1000.0,  2000.0,  2384.76 };
 
@@ -182,5 +208,16 @@ float Gate78Area[4]={ 2142.17, 2521.64,    0.0,  2313.53 };
 float Gate89Area[4]={ 2521.64, 4200.0,     0.0,  2500    };
 #endif
 
+#ifdef TOMY_ROBO
+//float Gate12Area[4]={0.0, 1000.0, 2000.0, 2382.16};
+float Gate12Area[4]={    0.0,  1000.0,  2000.0,  2384.76 };
+float Gate23Area[4]={    0.0,  1118.86, 2382.16, 3800.0  };
+float Gate34Area[4]={ 1118.86, 2278.25, 2313.53, 3800.0  };
+float Gate45Area[4]={ 1000.0,  1725.13, 1445.85, 2313.53 };
+float Gate56Area[4]={ 1000.0,  1625.13,    0.0,  1445.85 };
+float Gate67Area[4]={ 1625.13, 2142.17,    0.0,  2313.53 };
+float Gate78Area[4]={ 2142.17, 2521.64,    0.0,  2313.53 };
+float Gate89Area[4]={ 2521.64, 4200.0,     0.0,  2500    };
+#endif
 
 //*/
